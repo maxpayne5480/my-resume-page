@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>案件管理 - 托里县应急管理局</title>
+    <style>
+        :root {
+            --emergency-blue: #0052CC;
+            --emergency-red: #DC3545;
+            --emergency-yellow: #FFC107;
+            --emergency-green: #198754;
+            --light-bg: #F8FAFC;
+            --card-bg: #FFFFFF;
+            --border-color: #E2E8F0;
+            --text-primary: #1A202C;
+            --text-secondary: #4A5568;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+        body {
+            background-color: var(--light-bg);
+            color: var(--text-primary);
+            padding: 0;
+            margin: 0;
+        }
+        .header-nav {
+            background-color: var(--emergency-blue);
+            color: white;
+            padding: 15px 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .logo-placeholder {
+            width: 40px;
+            height: 40px;
+            background-color: white;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--emergency-blue);
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .system-name {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .back-btn {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            padding: 8px 12px;
+            border-radius: 4px;
+            background-color: rgba(255,255,255,0.2);
+        }
+        .back-btn:hover {
+            background-color: rgba(255,255,255,0.3);
+        }
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+        }
+        .card-header {
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        .card-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--emergency-blue);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+        .form-group input, .form-group select {
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 14px;
+            width: 100%;
+            transition: border-color 0.3s;
+        }
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--emergency-blue);
+            box-shadow: 0 0 0 3px rgba(0, 82, 204, 0.1);
+        }
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        .form-row .form-group {
+            flex: 1;
+            min-width: 220px;
+        }
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-primary {
+            background-color: var(--emergency-blue);
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #0047B3;
+        }
+        .btn-success {
+            background-color: var(--emergency-green);
+            color: white;
+        }
+        .btn-success:hover {
+            background-color: #146c43;
+        }
+        .btn-warning {
+            background-color: var(--emergency-yellow);
+            color: #212529;
+        }
+        .btn-warning:hover {
+            background-color: #FFB000;
+        }
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 12px;
+        }
+        .filter-bar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+            padding: 15px;
+            background-color: #F1F5F9;
+            border-radius: 6px;
+        }
+        .filter-item {
+            flex: 1;
+            min-width: 180px;
+        }
+        .filter-item input, .filter-item select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        .table-container {
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            min-width: 800px;
+        }
+        .data-table th {
+            background-color: var(--emergency-blue);
+            color: white;
+            padding: 15px 12px;
+            text-align: left;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+        .data-table td {
+            padding: 15px 12px;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+        .data-table tr:hover {
+            background-color: #F8FAFC;
+        }
+        .progress-cell {
+            font-weight: 600;
+            padding: 8px 12px;
+            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .progress-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: white;
+        }
+        .progress-1 { background-color: rgba(0, 82, 204, 0.1); color: var(--emergency-blue); }
+        .progress-1 .progress-icon { background-color: var(--emergency-blue); }
+        .progress-2 { background-color: rgba(255, 193, 7, 0.1); color: #FF8C00; }
+        .progress-2 .progress-icon { background-color: #FF8C00; }
+        .progress-3 { background-color: rgba(25, 135, 84, 0.1); color: var(--emergency-green); }
+        .progress-3 .progress-icon { background-color: var(--emergency-green); }
+        .progress-4 { background-color: rgba(255, 159, 64, 0.1); color: #FD7E14; }
+        .progress-4 .progress-icon { background-color: #FD7E14; }
+        .progress-5 { background-color: rgba(123, 31, 162, 0.1); color: #7B1FA2; }
+        .progress-5 .progress-icon { background-color: #7B1FA2; }
+        .progress-6 { background-color: rgba(20, 184, 166, 0.1); color: #10B981; }
+        .progress-6 .progress-icon { background-color: #10B981; }
+        .progress-7 { background-color: rgba(108, 117, 125, 0.1); color: #6C757D; }
+        .progress-7 .progress-icon { background-color: #6C757D; }
+        .progress-8 { background-color: rgba(40, 167, 69, 0.1); color: #28A745; }
+        .progress-8 .progress-icon { background-color: #28A745; }
+        .progress-9 { background-color: rgba(0, 123, 255, 0.1); color: #007BFF; }
+        .progress-9 .progress-icon { background-color: #007BFF; }
+        .progress-10 { background-color: rgba(33, 37, 41, 0.1); color: #212529; }
+        .progress-10 .progress-icon { background-color: #212529; }
+        .status-tag {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .status-normal { background-color: rgba(22, 163, 74, 0.1); color: var(--emergency-green); }
+        .status-warning { background-color: rgba(245, 158, 11, 0.1); color: var(--emergency-yellow); }
+        .status-overdue { background-color: rgba(220, 53, 69, 0.1); color: var(--emergency-red); }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            padding: 30px 20px;
+        }
+        .modal-content {
+            background-color: var(--card-bg);
+            margin: 0 auto;
+            padding: 30px;
+            border-radius: 8px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
+        }
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--emergency-blue);
+        }
+        .close-modal {
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+        .close-modal:hover {
+            color: var(--emergency-red);
+        }
+        @media (max-width: 768px) {
+            .form-row { flex-direction: column; gap: 0; }
+            .btn { width: 100%; justify-content: center; }
+            .filter-bar { flex-direction: column; gap: 10px; }
+            .filter-item { width: 100%; min-width: auto; }
+            .modal-content { padding: 20px; }
+            .card { padding: 15px; }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <!-- 延迟加载Excel库 -->
+    <script>
+        // 仅在需要时加载Excel库
+        function loadExcelLib() {
+            return new Promise((resolve) => {
+                if (window.XLSX) {
+                    resolve();
+                    return;
+                }
+                const script = document.createElement('script');
+                script.src = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
+                script.onload = () => {
+                    const saverScript = document.createElement('script');
+                    saverScript.src = 'https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js';
+                    saverScript.onload = resolve;
+                    document.body.appendChild(saverScript);
+                };
+                document.body.appendChild(script);
+            });
+        }
+    </script>
+</head>
+<body>
+    <div class="header-nav">
+        <div class="nav-container">
+            <div class="logo-area">
+                <div class="logo-placeholder">应急</div>
+                <div class="system-name">案件管理 - 托里县应急管理局</div>
+            </div>
+            <a href="index.html" class="back-btn">
+                <i class="bi bi-arrow-left"></i> 返回首页
+            </a>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- 新增案件卡片 -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">
+                    <i class="bi bi-plus-circle"></i> 新增行政处罚案件
+                </div>
+            </div>
+            <form id="caseForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="caseNumber">案件编号 <span style="color: var(--emergency-red);">*</span></label>
+                        <input type="text" id="caseNumber" required placeholder="如：托应急罚〔2025〕001号">
+                    </div>
+                    <div class="form-group">
+                        <label for="enterpriseName">企业名称 <span style="color: var(--emergency-red);">*</span></label>
+                        <input type="text" id="enterpriseName" required placeholder="填写涉事企业全称">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="caseName">案件名称 <span style="color: var(--emergency-red);">*</span></label>
+                        <input type="text" id="caseName" required placeholder="如：XX加油站违规动火作业案">
+                    </div>
+                    <div class="form-group">
+                        <label for="enterpriseType">企业类型 <span style="color: var(--emergency-red);">*</span></label>
+                        <select id="enterpriseType" required>
+                            <option value="">请选择</option>
+                            <option value="矿山">矿山</option>
+                            <option value="危化">危化</option>
+                            <option value="工贸">工贸</option>
+                            <option value="烟花爆竹">烟花爆竹</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="registerDate">立案日期 <span style="color: var(--emergency-red);">*</span></label>
+                        <input type="date" id="registerDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="handlerName">办案人 <span style="color: var(--emergency-red);">*</span></label>
+                        <input type="text" id="handlerName" required placeholder="填写办案人姓名（多人用/分隔）">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-save"></i> 添加案件
+                    </button>
+                    <button type="button" class="btn btn-success" onclick="importCases()">
+                        <i class="bi bi-upload"></i> 导入Excel案件
+                    </button>
+                    <button type="button" class="btn btn-warning" onclick="exportCases()">
+                        <i class="bi bi-download"></i> 导出Excel案件
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- 案件列表卡片 -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">
+                    <i class="bi bi-list-check"></i> 案件进度列表
+                </div>
+            </div>
+
+            <!-- 筛选栏 -->
+            <div class="filter-bar">
+                <div class="filter-item">
+                    <input type="text" id="searchInput" placeholder="搜索案件编号/企业名称/案件名称">
+                </div>
+                <div class="filter-item">
+                    <select id="statusFilter">
+                        <option value="">全部进度</option>
+                        <option value="1">立案</option>
+                        <option value="2">调查取证</option>
+                        <option value="3">集体讨论完成</option>
+                        <option value="4">处罚事先告知</option>
+                        <option value="5">作出处罚决定</option>
+                        <option value="6">送达处罚决定书</option>
+                        <option value="7">罚款缴纳</option>
+                        <option value="8">案件结案</option>
+                        <option value="9">案卷立卷</option>
+                        <option value="10">案卷归档</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <select id="enterpriseTypeFilter">
+                        <option value="">全部企业类型</option>
+                        <option value="矿山">矿山</option>
+                        <option value="危化">危化</option>
+                        <option value="工贸">工贸</option>
+                        <option value="烟花爆竹">烟花爆竹</option>
+                    </select>
+                </div>
+                <div class="filter-item" style="min-width: 100px;">
+                    <button class="btn btn-primary btn-sm" onclick="filterCases()">
+                        <i class="bi bi-funnel"></i> 筛选
+                    </button>
+                </div>
+                <div class="filter-item" style="min-width: 100px;">
+                    <button class="btn btn-secondary btn-sm" onclick="resetFilter()">
+                        <i class="bi bi-arrow-counterclockwise"></i> 重置
+                    </button>
+                </div>
+            </div>
+
+            <!-- 案件表格 -->
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>案件编号</th>
+                            <th>企业名称</th>
+                            <th>企业类型</th>
+                            <th>案件名称</th>
+                            <th>办案人</th>
+                            <th>当前进度</th>
+                            <th>截止日期</th>
+                            <th>剩余天数</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="caseTableBody">
+                        <tr>
+                            <td colspan="9" style="text-align: center; padding: 30px; color: var(--text-secondary);">暂无案件数据</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- 进度更新确认弹窗 -->
+    <div id="progressUpdateModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">确认更新案件进度</div>
+                <span class="close-modal" onclick="closeProgressModal()">&times;</span>
+            </div>
+            <div id="progressUpdateContent" style="margin-bottom: 20px;"></div>
+            <div class="form-group" style="margin: 20px 0;">
+                <input type="checkbox" id="confirmCheck" style="width: auto; margin-right: 10px;">
+                <label for="confirmCheck" style="display: inline;">我确认已完成该阶段所有工作</label>
+            </div>
+            <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                <button class="btn btn-secondary" onclick="closeProgressModal()">取消</button>
+                <button class="btn btn-primary" id="confirmUpdateBtn" onclick="confirmProgressUpdate()" disabled>
+                    <i class="bi bi-check"></i> 确认更新
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量
+        let pendingProgressUpdateId = "";
+        let caseData = []; // 内存缓存案件数据，减少本地存储读写
+
+        // 2026年新疆节假日（精简版）
+        const xinjiangHolidays2026 = [
+            "2026-01-01", "2026-02-17", "2026-02-18", "2026-02-19", "2026-02-20", 
+            "2026-02-21", "2026-02-22", "2026-02-23", "2026-03-21", "2026-04-22", 
+            "2026-04-23", "2026-04-24", "2026-05-01", "2026-05-02", "2026-05-03", 
+            "2026-05-04", "2026-05-05", "2026-06-09", "2026-06-10", "2026-07-31", 
+            "2026-08-01", "2026-08-02", "2026-09-17", "2026-09-18", "2026-10-01", 
+            "2026-10-02", "2026-10-03", "2026-10-04", "2026-10-05", "2026-10-06", "2026-10-07"
+        ];
+
+        // 进度配置（精简）
+        const progressConfig = [
+            { id: 1, name: "立案", next: 2, deadlineRule: (d) => addDays(d, 90) },
+            { id: 2, name: "调查取证", next: 3, deadlineRule: (d) => addDays(d, 30) },
+            { id: 3, name: "集体讨论完成", next: 4, deadlineRule: (d) => addDays(d, 3) },
+            { id: 4, name: "处罚事先告知", next: 5, deadlineRule: (d) => addDays(d, 3) },
+            { id: 5, name: "作出处罚决定", next: 6, deadlineRule: (d) => addDays(d, 7) },
+            { id: 6, name: "送达处罚决定书", next: 7, deadlineRule: (d) => addDays(d, 15) },
+            { id: 7, name: "罚款缴纳", next: 8, deadlineRule: (d) => addDays(d, 0) },
+            { id: 8, name: "案件结案", next: 9, deadlineRule: (d) => addWorkDays(d, 20) },
+            { id: 9, name: "案卷立卷", next: 10, deadlineRule: (d) => addDays(d, 30) },
+            { id: 10, name: "案卷归档", next: 10, deadlineRule: (d) => null }
+        ];
+
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', () => {
+            // 快速加载本地数据（仅读取一次）
+            caseData = JSON.parse(localStorage.getItem('xjEmergencyCases') || '[]');
+            renderCases();
+            
+            // 绑定表单提交事件
+            document.getElementById('caseForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                addCase(); // 优化后的添加案件逻辑
+            });
+
+            // 勾选框启用确认按钮
+            document.getElementById('confirmCheck').addEventListener('change', function() {
+                document.getElementById('confirmUpdateBtn').disabled = !this.checked;
+            });
+        });
+
+        // 工具函数：添加天数（简化）
+        function addDays(dateStr, days) {
+            const date = new Date(dateStr);
+            date.setDate(date.getDate() + days);
+            return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
+        }
+
+        // 工具函数：添加工作日（简化计算）
+        function addWorkDays(dateStr, workDays) {
+            let date = new Date(dateStr);
+            let count = 0;
+            while (count < workDays) {
+                date.setDate(date.getDate() + 1);
+                const str = `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
+                if (date.getDay() !== 0 && date.getDay() !== 6 && !xinjiangHolidays2026.includes(str)) {
+                    count++;
+                }
+            }
+            return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
+        }
+
+        // 计算剩余天数（简化）
+        function getRemainingDays(endDateStr) {
+            if (!endDateStr) return 0;
+            const diff = new Date(endDateStr) - new Date();
+            return Math.ceil(diff / (1000 * 60 * 60 * 24));
+        }
+
+        // 渲染案件列表（优化：减少DOM操作）
+        function renderCases(filtered = null) {
+            const tbody = document.getElementById('caseTableBody');
+            const data = filtered || caseData;
+            
+            if (data.length === 0) {
+                tbody.innerHTML = `<td colspan="9" style="text-align: center; padding: 30px; color: var(--text-secondary);">暂无案件数据</td>`;
+                return;
+            }
+
+            let html = '';
+            data.forEach(item => {
+                const remaining = getRemainingDays(item.deadline);
+                let statusClass = 'status-normal', statusText = `${remaining}天`;
+                
+                if (remaining <= 3 && remaining > 0) {
+                    statusClass = 'status-warning';
+                    statusText = `仅剩${remaining}天`;
+                } else if (remaining <= 0) {
+                    statusClass = 'status-overdue';
+                    statusText = remaining === 0 ? '最后1天' : `逾期${Math.abs(remaining)}天`;
+                }
+
+                const progress = progressConfig.find(p => p.id === item.progress);
+                const progressHtml = `
+                    <div class="progress-cell progress-${item.progress}">
+                        <span class="progress-icon">${item.progress}</span>
+                        ${progress?.name || '-'}
+                    </div>
+                `;
+
+                html += `
+                    <tr>
+                        <td>${item.caseNumber}</td>
+                        <td>${item.enterpriseName}</td>
+                        <td>${item.enterpriseType}</td>
+                        <td>${item.caseName}</td>
+                        <td>${item.handlerName}</td>
+                        <td>${progressHtml}</td>
+                        <td>${item.deadline || '-'}</td>
+                        <td><span class="status-tag ${statusClass}">${statusText}</span></td>
+                        <td>
+                            <button class="btn btn-primary btn-sm" onclick="showProgressUpdateModal('${item.id}')">
+                                <i class="bi bi-arrow-right"></i> 更新进度
+                            </button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteCase('${item.id}')">
+                                <i class="bi bi-trash"></i> 删除
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = html;
+        }
+
+        // 添加案件（优化：减少计算，快速存储）
+        function addCase() {
+            const caseNumber = document.getElementById('caseNumber').value.trim();
+            const enterpriseName = document.getElementById('enterpriseName').value.trim();
+            const caseName = document.getElementById('caseName').value.trim();
+            const enterpriseType = document.getElementById('enterpriseType').value;
+            const registerDate = document.getElementById('registerDate').value;
+            const handlerName = document.getElementById('handlerName').value.trim();
+
+            // 快速验证
+            if (!caseNumber || !enterpriseName || !caseName || !enterpriseType || !registerDate || !handlerName) {
+                alert('请填写所有必填字段！');
+                return;
+            }
+
+            // 生成案件（最小化数据结构）
+            const newCase = {
+                id: Date.now().toString(), // 简化ID生成
+                caseNumber,
+                enterpriseName,
+                enterpriseType,
+                caseName,
+                handlerName,
+                registerDate,
+                progress: 1,
+                deadline: addDays(registerDate, 90),
+                updateTime: new Date().toISOString()
+            };
+
+            // 内存更新 + 批量存储
+            caseData.push(newCase);
+            localStorage.setItem('xjEmergencyCases', JSON.stringify(caseData));
+            
+            // 快速渲染（仅更新列表，不重复计算）
+            renderCases();
+            
+            // 重置表单
+            document.getElementById('caseForm').reset();
+            
+            // 反馈（简化）
+            alert('案件添加成功！');
+        }
+
+        // 删除案件（优化）
+        function deleteCase(id) {
+            if (!confirm('确认删除该案件？删除后无法恢复！')) return;
+            
+            // 内存更新
+            caseData = caseData.filter(item => item.id !== id);
+            // 批量存储
+            localStorage.setItem('xjEmergencyCases', JSON.stringify(caseData));
+            // 快速渲染
+            renderCases();
+        }
+
+        // 筛选案件（简化逻辑）
+        function filterCases() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const status = document.getElementById('statusFilter').value;
+            const type = document.getElementById('enterpriseTypeFilter').value;
+
+            let filtered = caseData;
+            
+            // 搜索筛选
+            if (search) {
+                filtered = filtered.filter(item => 
+                    item.caseNumber.toLowerCase().includes(search) ||
+                    item.enterpriseName.toLowerCase().includes(search) ||
+                    item.caseName.toLowerCase().includes(search)
+                );
+            }
+
+            // 进度筛选
+            if (status) {
+                filtered = filtered.filter(item => item.progress.toString() === status);
+            }
+
+            // 类型筛选
+            if (type) {
+                filtered = filtered.filter(item => item.enterpriseType === type);
+            }
+
+            renderCases(filtered);
+        }
+
+        // 重置筛选
+        function resetFilter() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('statusFilter').value = '';
+            document.getElementById('enterpriseTypeFilter').value = '';
+            renderCases();
+        }
+
+        // 显示进度更新弹窗
+        function showProgressUpdateModal(id) {
+            pendingProgressUpdateId = id;
+            const item = caseData.find(i => i.id === id);
+            if (!item) return;
+
+            const current = progressConfig.find(p => p.id === item.progress);
+            const next = progressConfig.find(p => p.id === current.next);
+
+            // 快速填充弹窗内容
+            document.getElementById('progressUpdateContent').innerHTML = `
+                <p><strong>案件编号：</strong>${item.caseNumber}</p>
+                <p><strong>当前进度：</strong>${current.name}</p>
+                <p><strong>拟更新至：</strong>${next.name}</p>
+                <p><strong>新截止日期：</strong>${next.deadlineRule(item.deadline) || '无'}</p>
+            `;
+
+            // 重置勾选框
+            document.getElementById('confirmCheck').checked = false;
+            document.getElementById('confirmUpdateBtn').disabled = true;
+
+            // 显示弹窗
+            document.getElementById('progressUpdateModal').style.display = 'block';
+        }
+
+        // 关闭进度弹窗
+        function closeProgressModal() {
+            document.getElementById('progressUpdateModal').style.display = 'none';
+            pendingProgressUpdateId = '';
+        }
+
+        // 确认进度更新（优化）
+        function confirmProgressUpdate() {
+            if (!pendingProgressUpdateId) return;
+
+            const index = caseData.findIndex(item => item.id === pendingProgressUpdateId);
+            if (index === -1) return;
+
+            const current = progressConfig.find(p => p.id === caseData[index].progress);
+            const next = progressConfig.find(p => p.id === current.next);
+
+            // 快速更新
+            caseData[index].progress = next.id;
+            caseData[index].deadline = next.deadlineRule(caseData[index].deadline);
+            caseData[index].updateTime = new Date().toISOString();
+
+            // 批量存储
+            localStorage.setItem('xjEmergencyCases', JSON.stringify(caseData));
+            
+            // 快速渲染
+            renderCases();
+            
+            // 关闭弹窗
+            closeProgressModal();
+            
+            alert('进度更新成功！');
+        }
+
+        // Excel导入（延迟加载库）
+        function importCases() {
+            loadExcelLib().then(() => {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = '.xlsx,.xls';
+                input.onchange = function(e) {
+                    const file = e.target.files[0];
+                    if (!file) return;
+
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        try {
+                            const data = new Uint8Array(e.target.result);
+                            const wb = XLSX.read(data, { type: 'array' });
+                            const ws = wb.Sheets[wb.SheetNames[0]];
+                            const json = XLSX.utils.sheet_to_json(ws);
+
+                            let success = 0;
+                            json.forEach(item => {
+                                if (item['案件编号'] && item['企业名称'] && item['案件名称'] && item['企业类型'] && item['办案人'] && item['立案日期']) {
+                                    caseData.push({
+                                        id: Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+                                        caseNumber: item['案件编号'],
+                                        enterpriseName: item['企业名称'],
+                                        enterpriseType: item['企业类型'],
+                                        caseName: item['案件名称'],
+                                        handlerName: item['办案人'],
+                                        registerDate: item['立案日期'],
+                                        progress: 1,
+                                        deadline: addDays(item['立案日期'], 90),
+                                        updateTime: new Date().toISOString()
+                                    });
+                                    success++;
+                                }
+                            });
+
+                            localStorage.setItem('xjEmergencyCases', JSON.stringify(caseData));
+                            renderCases();
+                            alert(`成功导入${success}条数据！`);
+                        } catch (err) {
+                            alert('导入失败，请检查文件格式！');
+                        }
+                    };
+                    reader.readAsArrayBuffer(file);
+                };
+                input.click();
+            });
+        }
+
+        // Excel导出（延迟加载库）
+        function exportCases() {
+            if (caseData.length === 0) {
+                alert('暂无数据可导出！');
+                return;
+            }
+
+            loadExcelLib().then(() => {
+                const exportData = caseData.map(item => {
+                    const progress = progressConfig.find(p => p.id === item.progress)?.name || '-';
+                    const remaining = getRemainingDays(item.deadline);
+                    return {
+                        '案件编号': item.caseNumber,
+                        '企业名称': item.enterpriseName,
+                        '企业类型': item.enterpriseType,
+                        '案件名称': item.caseName,
+                        '办案人': item.handlerName,
+                        '立案日期': item.registerDate,
+                        '当前进度': progress,
+                        '截止日期': item.deadline,
+                        '剩余天数': remaining > 0 ? `${remaining}天` : remaining === 0 ? '最后1天' : `逾期${Math.abs(remaining)}天`
+                    };
+                });
+
+                const ws = XLSX.utils.json_to_sheet(exportData);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, '案件数据');
+                
+                const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+                const blob = new Blob([wbout], { type: 'application/octet-stream' });
+                saveAs(blob, `案件数据_${new Date().toLocaleDateString().replace(/\//g, '-')}.xlsx`);
+            });
+        }
+    </script>
+</body>
+</html>

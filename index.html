@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>托里县应急管理局 - 行政处罚案件管理系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+        body {
+            background-color: #F8FAFC;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+        .logo {
+            width: 80px;
+            height: 80px;
+            background-color: #0052CC;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .title {
+            font-size: 22px;
+            color: #1A202C;
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+        .nav-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .nav-btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+        .case-btn {
+            background-color: #0052CC;
+            color: white;
+        }
+        .case-btn:hover {
+            background-color: #0047B3;
+            box-shadow: 0 4px 12px rgba(0,82,204,0.2);
+        }
+        .training-btn {
+            background-color: #198754;
+            color: white;
+        }
+        .training-btn:hover {
+            background-color: #146c43;
+            box-shadow: 0 4px 12px rgba(25,135,84,0.2);
+        }
+        .icon {
+            font-size: 20px;
+        }
+    </style>
+    <!-- 仅加载必要图标 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+</head>
+<body>
+    <div class="container">
+        <div class="logo">应急</div>
+        <div class="title">托里县应急管理局<br>行政处罚案件管理系统</div>
+        <div class="nav-buttons">
+            <a href="case-management.html" class="nav-btn case-btn">
+                <i class="bi bi-list-check icon"></i>
+                案件管理
+            </a>
+            <a href="training.html" class="nav-btn training-btn">
+                <i class="bi bi-book icon"></i>
+                培训教育
+            </a>
+        </div>
+    </div>
+</body>
+</html>

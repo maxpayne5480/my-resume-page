@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>培训教育 - 托里县应急管理局</title>
+    <style>
+        :root {
+            --emergency-blue: #0052CC;
+            --light-bg: #F8FAFC;
+            --card-bg: #FFFFFF;
+            --border-color: #E2E8F0;
+            --text-primary: #1A202C;
+            --text-secondary: #4A5568;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+        body {
+            background-color: var(--light-bg);
+            color: var(--text-primary);
+            line-height: 1.8;
+            padding: 0;
+            margin: 0;
+        }
+        .header-nav {
+            background-color: var(--emergency-blue);
+            color: white;
+            padding: 15px 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .logo-placeholder {
+            width: 40px;
+            height: 40px;
+            background-color: white;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--emergency-blue);
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .system-name {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .back-btn {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            padding: 8px 12px;
+            border-radius: 4px;
+            background-color: rgba(255,255,255,0.2);
+        }
+        .back-btn:hover {
+            background-color: rgba(255,255,255,0.3);
+        }
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 30px;
+            border: 1px solid var(--border-color);
+        }
+        .card-header {
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .card-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--emergency-blue);
+            text-align: center;
+        }
+        .training-section {
+            margin-bottom: 40px;
+        }
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--emergency-blue);
+            margin-bottom: 20px;
+            padding-left: 15px;
+            border-left: 4px solid var(--emergency-blue);
+        }
+        .section-subtitle {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 20px 0 10px;
+            color: #2D3748;
+        }
+        .content-text {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        .code-block {
+            background-color: #F1F5F9;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+            font-family: "Consolas", monospace;
+            font-size: 14px;
+            border-left: 4px solid var(--emergency-blue);
+        }
+        .timeline {
+            position: relative;
+            margin: 30px 0;
+            padding-left: 40px;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background-color: var(--emergency-blue);
+        }
+        .timeline-item {
+            position: relative;
+            margin-bottom: 30px;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -30px;
+            top: 5px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: var(--emergency-blue);
+            border: 3px solid white;
+            box-shadow: 0 0 0 2px var(--emergency-blue);
+        }
+        .timeline-title {
+            font-weight: 600;
+            color: var(--emergency-blue);
+            margin-bottom: 5px;
+            font-size: 16px;
+        }
+        .timeline-time {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+        }
+        @media (max-width: 768px) {
+            .card {
+                padding: 20px;
+            }
+            .timeline {
+                padding-left: 30px;
+            }
+            .timeline-item::before {
+                left: -20px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+</head>
+<body>
+    <div class="header-nav">
+        <div class="nav-container">
+            <div class="logo-area">
+                <div class="logo-placeholder">应急</div>
+                <div class="system-name">培训教育 - 托里县应急管理局</div>
+            </div>
+            <a href="index.html" class="back-btn">
+                <i class="bi bi-arrow-left"></i> 返回首页
+            </a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">行政处罚案件案卷时间线规范培训</div>
+            </div>
+
+            <div class="training-section">
+                <div class="section-title">一、法规依据</div>
+                <div class="content-text">
+                    本系统严格依据《自治区应急管理行政执法案卷立卷规范》(新应急规〔2022〕1号)、《中华人民共和国行政处罚法》、《安全生产违法行为行政处罚办法》等法规制定，确保所有时间节点符合新疆应急管理系统执法规范要求。
+                </div>
+                <div class="code-block">
+                    【新应急规〔2022〕1号】第五条第五款：<br>
+                    行政执法案卷正卷、副卷材料按照行政执法程序和文书材料形成时间，兼顾行政执法文书材料之间的有机联系进行排列，其排列顺序可按照第九条至第十二条所列执行。
+                </div>
+            </div>
+
+            <div class="training-section">
+                <div class="section-title">二、核心时间节点说明</div>
+                <div class="section-subtitle">2.1 案件办理全流程时间线</div>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-title">1. 立案阶段</div>
+                        <div class="timeline-time">时间要求：发现违法线索后7个工作日内完成立案</div>
+                        <div class="content-text">
+                            执法人员发现安全生产违法行为后，需在7个工作日内完成立案审批，填写《立案审批表》，明确案件基本信息、违法事实、立案依据等。
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-title">2. 调查取证阶段</div>
+                        <div class="timeline-time">时间要求：立案后30日内完成调查取证（复杂案件可延长60日）</div>
+                        <div class="content-text">
+                            立案后需在30日内完成现场检查、询问笔录、证据收集等调查工作，形成完整的调查取证材料，确保违法事实清楚、证据确凿。
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-title">3. 集体讨论阶段</div>
+                        <div class="timeline-time">时间要求：作出处罚决定前必须完成（托里县所有案件均需集体讨论）</div>
+                        <div class="content-text">
+                            托里县应急管理局规定所有行政处罚案件均需进行集体讨论，填写《行政处罚集体讨论记录》，明确讨论意见和处罚建议。
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-title">4. 处罚事先告知阶段</div>
+                        <div class="timeline-time">时间要求：集体讨论后≥3天，保障当事人陈述申辩权利</div>
+                        <div class="content-text">
+                            向当事人送达《行政处罚事先告知书》，告知拟作出的处罚决定及事实、理由、依据，当事人可在3日内提出陈述申辩或听证申请（托里县暂未发生听证案例）。
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-title">5. 作出处罚决定阶段</div>
+                        <div class="timeline-time">时间要求：立案之日起90日内作出（特殊情况可延长至180日）</div>
+                        <div class="content-text">
+                            在法定期限内作出《行政处罚决定书》，明确处罚种类、罚款金额、履行方式、救济途径等核心内容。
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-title">6. 送达处罚决定书阶段</div>
+                        <div class="timeline-time">时间要求：处罚决定作出后7日内送达当事人</div>
+                        <div class="content-text">
+                            采用直接送达、留置送达、邮寄送达等方式送达《行政处罚决定书》，填写《送达回执》，确保送达程序合法有效。
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-title">7. 罚款缴纳阶段</div>
+                        <div class="timeline-time">时间要求：收到决定书后15日内缴纳罚款</div>
+                        <div class="content-text">
+                            当事人需在15日内到指定银行缴纳罚款，逾期未缴的，每日按罚款数额的3%加处罚款（不超过本金），逾期60日可申请法院强制执行。
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-title">8. 案件结案阶段</div>
+                        <div class="timeline-time">时间要求：罚款缴纳或强制执行完毕后立即结案</div>
+                        <div class="content-text">
+                            当事人履行完毕处罚决定后，填写《结案审批表》，完成案件结案工作。
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-title">9. 案卷立卷阶段</div>
+                        <div class="timeline-time">时间要求：处罚决定作出后20个工作日内（含新疆节假日）</div>
+                        <div class="content-text">
+                            按照规范要求整理案卷材料，填写卷内目录，确保文书齐全、顺序正确，20个工作日计算需排除周末和新疆民族节假日（肉孜节、古尔邦节、诺鲁孜节等）。
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-title">10. 案卷归档阶段</div>
+                        <div class="timeline-time">时间要求：案件结案后30日内完成归档</div>
+                        <div class="content-text">
+                            将整理完毕的案卷移交档案管理部门归档，建立案卷台账，确保案卷保存完整、查阅规范。
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="training-section">
+                <div class="section-title">三、新疆法定节假日说明（2026年）</div>
+                <div class="content-text">
+                    计算20个工作日立卷期限时，需排除以下新疆法定节假日：
+                </div>
+                <ul class="content-text" style="padding-left: 30px;">
+                    <li>元旦：2026年1月1日-3日（3天）</li>
+                    <li>春节：2026年2月17日-23日（7天）</li>
+                    <li>诺鲁孜节：2026年3月21日（1天）</li>
+                    <li>肉孜节：2026年4月22日-24日（3天）</li>
+                    <li>劳动节：2026年5月1日-5日（5天）</li>
+                    <li>端午节：2026年6月9日-10日（2天）</li>
+                    <li>古尔邦节：2026年7月31日-8月2日（3天）</li>
+                    <li>中秋节：2026年9月17日-18日（2天）</li>
+                    <li>国庆节：2026年10月1日-7日（7天）</li>
+                </ul>
+            </div>
+
+            <div class="training-section">
+                <div class="section-title">四、常见问题解答</div>
+                <div class="section-subtitle">Q1：调查取证超过30天怎么办？</div>
+                <div class="content-text">
+                    A1：复杂案件可填写《延长调查取证期限审批表》，经局领导批准后可延长60天，总计不超过90天。
+                </div>
+                <div class="section-subtitle">Q2：当事人逾期未缴纳罚款如何处理？</div>
+                <div class="content-text">
+                    A2：逾期15日未缴的，先送达《罚款催缴通知书》；逾期60日仍未缴的，作出《加处罚款决定书》，并可向法院申请强制执行。
+                </div>
+                <div class="section-subtitle">Q3：案卷立卷完成后如何归档？</div>
+                <div class="content-text">
+                    A3：立卷完成后30日内，将纸质案卷和电子扫描件一并移交档案管理部门，填写《案卷归档登记表》。
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
