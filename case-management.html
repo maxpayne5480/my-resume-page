@@ -238,8 +238,8 @@
  * ⚠️ 配置区：请在此处填入你的维格表 Token 和 ID
  * =======================================================
  */
-const VIKA_TOKEN = '';      // 例如: 'uskXyZ...'
-const DATASHEET_ID = '';    // 例如: 'dst123...'
+const VIKA_TOKEN = 'uskiO2vJEiSUFADER9XIlEd';      // 例如: 'uskXyZ...'
+const DATASHEET_ID = 'dstxQf2SXq5boYq549';    // 例如: 'dst123...'
 
 // 检查是否配置
 if(!VIKA_TOKEN || !DATASHEET_ID) {
@@ -592,23 +592,10 @@ function toast(msg, type='success') {
 
 // 启动
 refreshData();
-<script>
-    // ==========================================
-    // ▼▼▼ 请手动补上这两行配置信息 ▼▼▼
-    // ==========================================
-    const VIKA_TOKEN = 'uskiO2vJEiSUFADER9XIlEd'; 
-    const DATASHEET_ID = 'dstxQf2SXq5boYq549';
-    // ==========================================
-
-    // ... 下面应该是原本的 fetch 或 axios 请求代码 ...
-    
-    // 例如应该有类似这样的代码在下面（如果没有，那说明逻辑也没写）：
-    // fetch(`https://api.vika.cn/fusion/v1/datasheets/${DATASHEET_ID}/records`, {
-    //     headers: { 'Authorization': `Bearer ${VIKA_TOKEN}` }
-    // })
 </script>
 </body>
 </script>
 </body>
 </html>
+
 
