@@ -2,142 +2,190 @@
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-  <title>托里县应急管理局｜案件管理</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>托里县应急管理局｜案件云端协作平台</title>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@vikadata/vika@latest/dist/vika.browser.js"></script>
+
   <style>
+    /* === 核心视觉：Clean Enterprise v2.0 (云端版蓝紫配色) === */
     :root {
-      --primary: #2563eb; --primary-hover: #1d4ed8; --primary-light: #eff6ff;
+      --primary: #4f46e5;       /* 靛蓝：代表云端/互联 */
+      --primary-hover: #4338ca;
+      --primary-light: #eef2ff;
       --danger: #dc2626; --danger-bg: #fef2f2;
-      --warning: #f59e0b; --warning-bg: #fffbeb;
-      --success: #10b981; --success-bg: #ecfdf5;
-      --bg-body: #f8fafc; --surface: #ffffff;
-      --text-main: #0f172a; --text-muted: #64748b; --border: #e2e8f0;
-      --radius-md: 12px; --shadow-card: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+      --warning: #d97706; --warning-bg: #fffbeb;
+      --success: #059669; --success-bg: #ecfdf5;
+      --bg-body: #f1f5f9;
+      --surface: #ffffff;
+      --text-main: #1e293b; --text-muted: #64748b;
+      --border: #e2e8f0;
+      --radius: 12px;
+      --shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.06);
     }
-    * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
-    body { margin: 0; font-family: "Microsoft YaHei", sans-serif; background: var(--bg-body); color: var(--text-main); padding-bottom: 60px; }
     
-    .app-container { max-width: 1400px; margin: 0 auto; padding: 20px; }
-    
-    /* Header */
-    .header { display: flex; justify-content: space-between; align-items: center; background: var(--surface); padding: 16px 24px; border-radius: var(--radius-md); box-shadow: var(--shadow-card); margin-bottom: 20px; border: 1px solid var(--border); }
+    * { box-sizing: border-box; outline: none; }
+    body { margin: 0; font-family: "Microsoft YaHei", sans-serif; background: var(--bg-body); color: var(--text-main); line-height: 1.5; padding-bottom: 40px; }
+
+    .app-wrap { max-width: 1200px; margin: 0 auto; padding: 20px; }
+
+    /* 顶部栏 */
+    .header {
+      background: var(--surface); padding: 16px 24px; border-radius: var(--radius);
+      box-shadow: var(--shadow); display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 24px; border-top: 4px solid var(--primary);
+    }
     .brand { display: flex; align-items: center; gap: 12px; }
-    .brand-icon { width: 40px; height: 40px; border-radius: 8px; background: linear-gradient(135deg, var(--primary), var(--danger)); color: #fff; display: grid; place-items: center; font-weight: bold; }
-    .brand-text h1 { margin: 0; font-size: 18px; font-weight: 700; }
+    .brand-icon { 
+      width: 42px; height: 42px; background: linear-gradient(135deg, #4f46e5, #9333ea); 
+      color: #fff; border-radius: 10px; display: grid; place-items: center; font-weight: 900; font-size: 18px;
+    }
+    .brand-text h1 { margin: 0; font-size: 18px; font-weight: 800; color: #1e293b; }
+    .online-badge { 
+      font-size: 12px; background: #ecfdf5; color: #059669; padding: 2px 8px; border-radius: 99px; border: 1px solid #a7f3d0; margin-left: 8px; display: inline-flex; align-items: center; gap: 4px;
+    }
+    .online-badge::before { content:""; width:6px; height:6px; background:#059669; border-radius:50%; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%{opacity:1} 50%{opacity:0.4} 100%{opacity:1} }
+
+    /* 统计卡片 */
+    .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .stat-card { background: var(--surface); padding: 20px; border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--border); }
+    .stat-t { font-size: 13px; color: var(--text-muted); margin-bottom: 6px; font-weight: 600; }
+    .stat-v { font-size: 26px; font-weight: 800; letter-spacing: -0.5px; }
+
+    /* 表格区域 */
+    .main-card { background: var(--surface); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; border: 1px solid var(--border); }
+    .toolbar { padding: 16px; border-bottom: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; background: #f8fafc; }
     
-    /* Stats */
-    .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px; }
-    .stat-card { background: var(--surface); padding: 20px; border-radius: var(--radius-md); border: 1px solid var(--border); display: flex; flex-direction: column; }
-    .stat-label { font-size: 13px; color: var(--text-muted); margin-bottom: 4px; }
-    .stat-value { font-size: 28px; font-weight: 800; }
-    .stat-card.alert .stat-value { color: var(--danger); }
+    .search-inp { flex: 1; min-width: 200px; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; transition: 0.2s; }
+    .search-inp:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
     
-    /* Toolbar & Table */
-    .toolbar { background: var(--surface); padding: 16px; border-radius: var(--radius-md) var(--radius-md) 0 0; border: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; }
-    .search-box { flex: 1; min-width: 200px; }
-    .form-input, .form-select { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; }
-    
-    .table-container { background: var(--surface); border: 1px solid var(--border); border-top: none; border-radius: 0 0 var(--radius-md) var(--radius-md); overflow-x: auto; }
+    .filter-sel { padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: #fff; font-size: 14px; }
+
+    .table-box { overflow-x: auto; }
     table { width: 100%; border-collapse: collapse; min-width: 1000px; }
-    th { background: #f1f5f9; text-align: left; padding: 12px 16px; font-size: 12px; color: var(--text-muted); position: sticky; top: 0; }
-    td { padding: 14px 16px; border-bottom: 1px solid var(--border); font-size: 14px; vertical-align: middle; }
-    tr:hover td { background: var(--bg-body); }
-    
-    .badge { display: inline-flex; padding: 4px 10px; border-radius: 99px; font-size: 12px; font-weight: 700; }
-    .badge.blue { background: var(--primary-light); color: var(--primary); }
-    .badge.red { background: var(--danger-bg); color: var(--danger); }
-    .badge.orange { background: var(--warning-bg); color: var(--warning); }
-    .badge.purple { background: #f3e8ff; color: #7e22ce; } /* 事故专用 */
-    
-    .btn { padding: 10px 16px; border-radius: 6px; border: none; cursor: pointer; font-size: 14px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; transition: 0.2s; }
-    .btn.primary { background: var(--primary); color: #fff; }
+    th { background: #f1f5f9; text-align: left; padding: 14px 16px; font-size: 12px; color: var(--text-muted); font-weight: 700; white-space: nowrap; }
+    td { padding: 14px 16px; border-bottom: 1px solid var(--border); font-size: 14px; color: #334155; vertical-align: middle; }
+    tr:hover td { background: #f8fafc; }
+
+    /* 状态标签 */
+    .tag { display: inline-flex; padding: 4px 10px; border-radius: 99px; font-size: 12px; font-weight: 700; line-height: 1; }
+    .tag.blue { background: var(--primary-light); color: var(--primary); }
+    .tag.red { background: var(--danger-bg); color: var(--danger); }
+    .tag.orange { background: var(--warning-bg); color: var(--warning); }
+    .tag.purple { background: #f3e8ff; color: #7e22ce; border: 1px solid #d8b4fe; } /* 事故案件专用 */
+
+    /* 按钮 */
+    .btn { display: inline-flex; align-items: center; justify-content: center; padding: 10px 18px; border-radius: 8px; border: none; font-size: 14px; font-weight: 600; cursor: pointer; transition: 0.2s; gap: 6px; }
+    .btn.primary { background: var(--primary); color: #fff; box-shadow: 0 2px 5px rgba(79, 70, 229, 0.3); }
+    .btn.primary:hover { background: var(--primary-hover); transform: translateY(-1px); }
     .btn.outline { background: #fff; border: 1px solid var(--border); color: var(--text-main); }
-    .btn:hover { opacity: 0.9; transform: translateY(-1px); }
-    
-    /* Modal */
-    .modal-overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.5); backdrop-filter: blur(4px); z-index: 100; display: none; place-items: center; padding: 20px; }
-    .modal-overlay.open { display: grid; }
-    .modal-content { background: var(--surface); width: 100%; max-width: 900px; max-height: 90vh; overflow-y: auto; border-radius: var(--radius-md); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
-    .modal-header { padding: 16px 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: var(--surface); z-index: 10; }
+    .btn.outline:hover { background: #f8fafc; border-color: #cbd5e1; }
+    .btn.sm { padding: 6px 12px; font-size: 12px; }
+
+    /* 弹窗 */
+    .modal-mask { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); z-index: 99; display: none; place-items: center; padding: 20px; }
+    .modal-mask.show { display: grid; }
+    .modal { background: #fff; width: 100%; max-width: 850px; border-radius: 16px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
+    .modal-head { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: #fff; z-index: 10; }
     .modal-body { padding: 24px; }
-    
-    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
-    .form-group label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 6px; }
-    .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
-    .tab-btn { padding: 10px 16px; border: none; background: none; cursor: pointer; border-bottom: 2px solid transparent; font-weight: 600; color: var(--text-muted); }
-    .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
-    .tab-pane { display: none; } .tab-pane.active { display: block; }
+
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .form-item label { display: block; font-size: 12px; font-weight: 700; color: #475569; margin-bottom: 6px; }
+    .form-input { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; }
+    .form-input:disabled { background: #f1f5f9; color: #94a3b8; cursor: not-allowed; }
+
+    /* Loading 遮罩 */
+    #loading { position: fixed; inset: 0; background: rgba(255,255,255,0.8); z-index: 999; display: grid; place-items: center; font-weight: bold; color: var(--primary); }
+    .hidden { display: none !important; }
 
     /* Toast */
-    #toast-container { position: fixed; top: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
-    .toast { background: var(--surface); padding: 12px 16px; border-radius: 6px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); border-left: 4px solid var(--primary); display: flex; gap: 10px; font-size: 14px; animation: slideIn 0.3s; }
-    .toast.error { border-left-color: var(--danger); }
-    @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+    .toast-box { position: fixed; top: 20px; right: 20px; z-index: 1000; display: flex; flex-direction: column; gap: 10px; }
+    .toast { background: #fff; padding: 12px 16px; border-radius: 8px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); border-left: 4px solid var(--primary); font-size: 14px; font-weight: 600; animation: slideIn 0.3s; }
+    @keyframes slideIn { from{transform:translateX(100%)} to{transform:translateX(0)} }
   </style>
 </head>
 <body>
-  <div id="toast-container"></div>
-  <div class="app-container">
+
+  <div id="loading">正在连接云端数据库...</div>
+
+  <div class="toast-box" id="toastBox"></div>
+
+  <div class="app-wrap">
     <header class="header">
       <div class="brand">
-        <div class="brand-icon">安</div>
-        <div class="brand-text"><h1>案件管理系统</h1><span style="font-size:12px;color:#64748b">v2.1 事故案件增强版</span></div>
+        <div class="brand-icon">云</div>
+        <div class="brand-text">
+          <h1>案件云端协作平台 <span class="online-badge">Online</span></h1>
+          <div style="font-size:12px;color:#64748b;margin-top:2px">托里县应急管理局｜多地实时同步</div>
+        </div>
       </div>
-      <div>
-        <a href="./index.html" class="btn outline">🏠 返回首页</a>
-        <button class="btn outline" id="btnExport">📥 导出Excel</button>
-        <button class="btn primary" id="btnNewCase">＋ 新增案件</button>
+      <div style="display:flex;gap:10px">
+        <button class="btn outline" onclick="refreshData()">🔄 刷新数据</button>
+        <button class="btn outline" onclick="exportExcel()">📥 导出Excel</button>
+        <button class="btn primary" onclick="openNewCase()">＋ 新增案件</button>
       </div>
     </header>
 
-    <div class="dashboard-grid">
-      <div class="stat-card"><span class="stat-label">案件总数</span><span class="stat-value" id="kpi-total">-</span></div>
-      <div class="stat-card alert"><span class="stat-label">已逾期</span><span class="stat-value" id="kpi-overdue">-</span></div>
-      <div class="stat-card"><span class="stat-label">事故案件</span><span class="stat-value" id="kpi-accident" style="color:#7e22ce">-</span></div>
-      <div class="stat-card"><span class="stat-label">正常进度</span><span class="stat-value" id="kpi-normal" style="color:var(--success)">-</span></div>
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-t">案件总数</div><div class="stat-v" id="s_total">-</div></div>
+      <div class="stat-card" style="border-left:4px solid var(--danger)"><div class="stat-t">已逾期</div><div class="stat-v" style="color:var(--danger)" id="s_over">-</div></div>
+      <div class="stat-card" style="border-left:4px solid #7e22ce"><div class="stat-t">事故案件(60日)</div><div class="stat-v" style="color:#7e22ce" id="s_acc">-</div></div>
+      <div class="stat-card" style="border-left:4px solid var(--success)"><div class="stat-t">正常推进</div><div class="stat-v" style="color:var(--success)" id="s_ok">-</div></div>
     </div>
 
-    <div class="toolbar">
-      <input id="searchInput" class="form-input search-box" placeholder="搜索：编号、企业、办案人..." />
-      <select id="filterType" class="form-select" style="width:auto">
-        <option value="">所有类型</option>
-        <option value="矿山">矿山</option>
-        <option value="危化">危化</option>
-        <option value="工贸">工贸</option>
-        <option value="烟花爆竹">烟花爆竹</option>
-        <option value="事故案件">事故案件(60日)</option>
-      </select>
-    </div>
-
-    <div class="table-container">
-      <table>
-        <thead><tr><th>案件信息</th><th>类型</th><th>办案人</th><th>当前进度</th><th>法定截止</th><th>剩余天数</th><th style="text-align:right">操作</th></tr></thead>
-        <tbody id="tableBody"></tbody>
-      </table>
+    <div class="main-card">
+      <div class="toolbar">
+        <input class="search-inp" id="q_search" placeholder="🔍 搜索：编号 / 企业 / 办案人..." oninput="renderTable()">
+        <select class="filter-sel" id="q_type" onchange="renderTable()">
+          <option value="">全部类型</option>
+          <option value="矿山">矿山</option>
+          <option value="危化">危化</option>
+          <option value="工贸">工贸</option>
+          <option value="烟花爆竹">烟花爆竹</option>
+          <option value="事故案件">事故案件</option>
+        </select>
+        <select class="filter-sel" id="q_status" onchange="renderTable()">
+          <option value="">全部状态</option>
+          <option value="normal">正常</option>
+          <option value="warning">临期 (≤7天)</option>
+          <option value="overdue">逾期</option>
+        </select>
+      </div>
+      <div class="table-box">
+        <table>
+          <thead>
+            <tr>
+              <th width="25%">企业与编号</th>
+              <th width="10%">类型</th>
+              <th width="10%">办案人</th>
+              <th width="15%">当前进度</th>
+              <th width="15%">法定截止</th>
+              <th width="10%">剩余天数</th>
+              <th width="15%" style="text-align:right">操作</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
     </div>
   </div>
 
-  <div class="modal-overlay" id="detailModal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 style="margin:0">案件详情</h3>
-        <button class="btn outline" onclick="closeModal()">×</button>
+  <div class="modal-mask" id="detailModal">
+    <div class="modal">
+      <div class="modal-head">
+        <h3 style="margin:0;font-size:18px">案件详情</h3>
+        <button class="btn outline sm" onclick="closeModal()">关闭</button>
       </div>
       <div class="modal-body">
-        <div class="tabs">
-          <button class="tab-btn active" data-tab="t-base">基本信息</button>
-          <button class="tab-btn" data-tab="t-progress">进度记录</button>
-          <button class="tab-btn" data-tab="t-files">附件(DB)</button>
-        </div>
         
-        <div id="t-base" class="tab-pane active">
+        <div style="background:#f8fafc;padding:20px;border-radius:12px;margin-bottom:20px;border:1px solid #e2e8f0">
           <div class="form-grid">
-            <div class="form-group"><label>案件编号</label><input class="form-input" id="inp_caseNumber"></div>
-            <div class="form-group"><label>企业名称</label><input class="form-input" id="inp_entName"></div>
-            <div class="form-group">
+            <div class="form-item"><label>案件编号</label><input class="form-input" id="i_no" placeholder="托应急罚〔2025〕xx号"></div>
+            <div class="form-item"><label>企业名称</label><input class="form-input" id="i_name"></div>
+            <div class="form-item">
               <label>企业类型</label>
-              <select class="form-select" id="inp_entType">
+              <select class="form-input" id="i_type" onchange="handleTypeChange()">
                 <option value="矿山">矿山</option>
                 <option value="危化">危化</option>
                 <option value="工贸">工贸</option>
@@ -145,317 +193,406 @@
                 <option value="事故案件">事故案件 (60日限)</option>
               </select>
             </div>
-            <div class="form-group"><label>立案日期</label><input type="date" class="form-input" id="inp_regDate"></div>
-            <div class="form-group"><label>办案人员</label><input class="form-input" id="inp_handler"></div>
-            <div class="form-group">
-              <label>期限设置</label>
-              <select class="form-select" id="inp_limit">
+            <div class="form-item"><label>办案人员</label><input class="form-input" id="i_handler"></div>
+            <div class="form-item"><label>立案日期</label><input type="date" class="form-input" id="i_date"></div>
+            <div class="form-item">
+              <label>办案期限</label>
+              <select class="form-input" id="i_limit">
                 <option value="90">90日 (一般程序)</option>
                 <option value="180">180日 (延长)</option>
               </select>
-              <div id="accidentHint" style="font-size:12px;color:#dc2626;margin-top:4px;display:none">⚠️ 事故案件强制锁定60日</div>
+              <div id="acc_hint" style="font-size:12px;color:red;margin-top:4px;display:none">⚠️ 事故案件强制锁定60日</div>
             </div>
           </div>
-          <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:20px">
-            <button class="btn primary" style="background:var(--danger)" id="btnDelete">删除</button>
-            <button class="btn primary" id="btnSaveBase">保存</button>
+          <div style="margin-top:20px;text-align:right;display:flex;justify-content:flex-end;gap:10px">
+             <button class="btn primary" style="background:var(--danger)" onclick="deleteCase()" id="btn_del">删除案件</button>
+             <button class="btn primary" onclick="saveCase()">💾 保存基本信息</button>
           </div>
         </div>
 
-        <div id="t-progress" class="tab-pane">
-          <div style="background:#f1f5f9;padding:15px;border-radius:8px;margin-bottom:15px;display:flex;justify-content:space-between">
-            <div>当前：<b id="view_stage">-</b></div>
-            <div>下一阶段：<b id="view_next_stage" style="color:var(--primary)">-</b></div>
-          </div>
-          <div style="display:flex;gap:10px;margin-bottom:20px">
-            <input type="date" class="form-input" id="inp_progDate" style="width:auto">
-            <input class="form-input" id="inp_progNote" placeholder="进度说明">
-            <button class="btn primary" id="btnUpdateProg">更新进度</button>
-          </div>
-          <div id="timelineList" style="border-left:2px solid #e2e8f0;padding-left:15px;margin-left:5px"></div>
+        <h4 style="margin:0 0 10px 0;border-left:4px solid var(--primary);padding-left:10px">进度追踪</h4>
+        <div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:15px">
+           <div style="display:flex;gap:10px;margin-bottom:15px">
+             <div style="padding:8px 12px;background:#eef2ff;color:#4f46e5;border-radius:6px;font-weight:bold;font-size:14px">
+               当前阶段：<span id="view_stage">立案</span>
+             </div>
+             <button class="btn outline sm" onclick="updateProgress()">➕ 更新至下一阶段</button>
+           </div>
+           
+           <div id="timeline_box" style="font-size:14px;color:#334155;max-height:200px;overflow-y:auto"></div>
         </div>
 
-        <div id="t-files" class="tab-pane">
-          <div style="background:#ecfdf5;color:#065f46;padding:10px;border-radius:6px;font-size:13px;margin-bottom:15px">
-             ✅ 已启用 IndexedDB 本地数据库技术，支持存储大文件且不卡顿。
-          </div>
-          <div style="display:flex;gap:10px;margin-bottom:15px">
-            <input type="file" id="inp_file" class="form-input">
-            <button class="btn primary" id="btnUploadFile">上传</button>
-          </div>
-          <div id="fileListArea"></div>
+        <div style="margin-top:20px;padding:12px;background:#fffbeb;color:#b45309;font-size:13px;border-radius:8px;border:1px solid #fcd34d">
+          ⚠️ <b>云端版限制提示：</b><br>
+          由于使用免费云数据库，本版本仅同步文字信息（案件台账、进度、时限）。<br>
+          大体积的执法文书、视频证据，请在单位内网电脑存档，或通过微信/钉钉单独传输。
         </div>
+
       </div>
     </div>
   </div>
 
 <script>
-// --- DB & Logic ---
-const DB_CFG = { name:'EmgCaseDB_v2', ver:1, store:'cases', fileStore:'files' };
-class DB {
-  async open(){
-    return new Promise((res,rej)=>{
-      const r = indexedDB.open(DB_CFG.name, DB_CFG.ver);
-      r.onupgradeneeded = e => {
-        const d = e.target.result;
-        if(!d.objectStoreNames.contains(DB_CFG.store)) d.createObjectStore(DB_CFG.store, {keyPath:'id'});
-        if(!d.objectStoreNames.contains(DB_CFG.fileStore)) d.createObjectStore(DB_CFG.fileStore, {keyPath:'id'}).createIndex('cid','cid');
-      };
-      r.onsuccess = e => res(e.target.result);
-      r.onerror = e => rej(e);
-    });
-  }
-  async tx(store, mode, cb){
-    const db = await this.open();
-    return new Promise((res,rej)=>{
-      const t = db.transaction(store, mode);
-      const req = cb(t.objectStore(store));
-      req.onsuccess = () => res(req.result);
-      req.onerror = () => rej(req.error);
-    });
-  }
-  async getAll(){ return this.tx(DB_CFG.store, 'readonly', s=>s.getAll()); }
-  async put(data){ return this.tx(DB_CFG.store, 'readwrite', s=>s.put(data)); }
-  async del(id){
-    const db = await this.open();
-    const tx = db.transaction([DB_CFG.store, DB_CFG.fileStore], 'readwrite');
-    tx.objectStore(DB_CFG.store).delete(id);
-    const idx = tx.objectStore(DB_CFG.fileStore).index('cid');
-    idx.getAllKeys(id).onsuccess = e => {
-      e.target.result.forEach(k => tx.objectStore(DB_CFG.fileStore).delete(k));
-    };
-    return new Promise(r => tx.oncomplete = r);
-  }
-  async addFile(f){ return this.tx(DB_CFG.fileStore, 'readwrite', s=>s.put(f)); }
-  async getFiles(cid){
-    const db = await this.open();
-    return new Promise(res => {
-      const idx = db.transaction(DB_CFG.fileStore,'readonly').objectStore(DB_CFG.fileStore).index('cid');
-      idx.getAll(cid).onsuccess = e => res(e.target.result);
-    });
-  }
-  async delFile(fid){ return this.tx(DB_CFG.fileStore, 'readwrite', s=>s.delete(fid)); }
+/**
+ * =======================================================
+ * ⚠️ 配置区：请在此处填入你的维格表 Token 和 ID
+ * =======================================================
+ */
+const VIKA_TOKEN = '';      // 例如: 'uskXyZ...'
+const DATASHEET_ID = '';    // 例如: 'dst123...'
+
+// 检查是否配置
+if(!VIKA_TOKEN || !DATASHEET_ID) {
+  alert("⚠️ 请先在 HTML 代码中填入 VIKA_TOKEN 和 DATASHEET_ID！\n\n请使用文本编辑器打开此文件进行编辑。");
 }
-const db = new DB();
+
+// 初始化 API
+const vika = Vika.auth({ token: VIKA_TOKEN });
+const datasheet = vika.datasheet(DATASHEET_ID);
+
+// 全局数据缓存
+let ALL_CASES = [];
+let CURRENT_ID = null; // 当前编辑的 recordId (维格表的ID)
+let CURRENT_DATA = null; // 当前编辑的完整数据对象
 
 const STAGES = [
-  {id:1,name:"立案/事故发生"}, {id:2,name:"调查取证"}, {id:3,name:"事先告知"}, 
-  {id:4,name:"决定/报告提交"}, {id:5,name:"送达/结案"}, {id:6,name:"归档完成"}
+  {id:1,n:"立案登记/事故发生"},{id:2,n:"调查取证"},{id:3,n:"事先告知"},
+  {id:4,n:"决定作出/报告提交"},{id:5,n:"送达执行"},{id:6,n:"结案归档"}
 ];
 
-// UI Logic
-let cases=[], curId=null;
+// === 核心功能函数 ===
 
-function toast(msg, type=''){
+// 1. 获取数据 (Read)
+async function refreshData() {
+  showLoading(true);
+  try {
+    const res = await datasheet.records.query({ pageSize: 1000 });
+    if(res.success) {
+      ALL_CASES = res.data.records.map(rec => {
+        // 我们的策略：所有复杂数据都存在 'data_json' 这一列文本里
+        // 第一列 'title' 存案件编号方便肉眼看
+        let parsed = {};
+        try {
+          parsed = JSON.parse(rec.fields['data_json']);
+        } catch(e) { parsed = {} }
+        
+        return {
+          _id: rec.recordId, // 维格表的行ID，用于修改
+          ...parsed
+        };
+      }).filter(c => c.caseNumber); // 过滤空行
+
+      renderTable();
+      calcStats();
+      toast('数据已从云端同步');
+    } else {
+      toast('同步失败: ' + res.message, 'error');
+    }
+  } catch(e) {
+    console.error(e);
+    toast('网络错误，请检查网络', 'error');
+  }
+  showLoading(false);
+}
+
+// 2. 保存/更新数据 (Create/Update)
+async function saveCase() {
+  const data = getFormData();
+  if(!data.caseNumber || !data.entName) return toast('编号和企业名称必填','error');
+
+  showLoading(true);
+  try {
+    // 构造要存的 JSON 字符串
+    // 如果是编辑，保留原来的 timeline 和 stage
+    if(CURRENT_DATA) {
+      data.stage = CURRENT_DATA.stage;
+      data.timeline = CURRENT_DATA.timeline;
+      data.createTime = CURRENT_DATA.createTime;
+    } else {
+      // 新增
+      data.stage = 1;
+      data.timeline = [{t: todayStr(), txt: '案件创建(云端登记)'}];
+      data.createTime = new Date().toISOString();
+    }
+    
+    const jsonStr = JSON.stringify(data);
+
+    if(CURRENT_ID) {
+      // 更新
+      await datasheet.records.update([{
+        recordId: CURRENT_ID,
+        fields: {
+          'title': data.caseNumber, // 第一列
+          'data_json': jsonStr      // 第二列存所有数据
+        }
+      }]);
+      toast('修改已保存至云端');
+    } else {
+      // 新增
+      await datasheet.records.create([{
+        fields: {
+          'title': data.caseNumber,
+          'data_json': jsonStr
+        }
+      }]);
+      toast('新案件已上传云端');
+    }
+    closeModal();
+    refreshData();
+  } catch(e) {
+    console.error(e);
+    toast('保存失败','error');
+  }
+  showLoading(false);
+}
+
+// 3. 删除数据 (Delete)
+async function deleteCase() {
+  if(!CURRENT_ID) return;
+  if(!confirm('⚠️ 警告：确定要从云数据库彻底删除此案件吗？所有同事将无法再查看。')) return;
+  
+  showLoading(true);
+  try {
+    await datasheet.records.delete([CURRENT_ID]);
+    toast('案件已删除');
+    closeModal();
+    refreshData();
+  } catch(e) {
+    toast('删除失败','error');
+  }
+  showLoading(false);
+}
+
+// 4. 进度更新
+async function updateProgress() {
+  if(!CURRENT_ID || !CURRENT_DATA) return toast('请先保存基本信息','error');
+  if(CURRENT_DATA.stage >= 6) return toast('已是最后阶段','error');
+
+  const note = prompt("请输入进度说明/备注：");
+  if(note === null) return;
+
+  CURRENT_DATA.stage += 1;
+  const stageName = STAGES.find(s=>s.id === CURRENT_DATA.stage).n;
+  CURRENT_DATA.timeline.push({ t: todayStr(), txt: `进入[${stageName}]：${note}` });
+  
+  // 仅更新 JSON 字段
+  const jsonStr = JSON.stringify(CURRENT_DATA);
+  
+  showLoading(true);
+  await datasheet.records.update([{
+    recordId: CURRENT_ID,
+    fields: { 'data_json': jsonStr }
+  }]);
+  showLoading(false);
+  
+  toast('进度已更新');
+  // 刷新界面
+  openDetail(CURRENT_ID); 
+  renderTable(); // 后台刷新一下列表
+}
+
+// === 辅助功能 ===
+
+function getFormData() {
+  return {
+    caseNumber: val('i_no'),
+    entName: val('i_name'),
+    entType: val('i_type'),
+    handler: val('i_handler'),
+    registerDate: val('i_date'),
+    decisionLimit: val('i_limit')
+  };
+}
+
+function renderTable() {
+  const q = val('q_search').toLowerCase();
+  const type = val('q_type');
+  const status = val('q_status');
+  const tbody = document.getElementById('tableBody');
+  
+  const list = ALL_CASES.filter(c => {
+    const txt = (c.caseNumber + c.entName + c.handler).toLowerCase();
+    const matchQ = txt.includes(q);
+    const matchType = !type || c.entType === type;
+    
+    // 状态筛选
+    const dl = calcDeadLine(c);
+    let matchStatus = true;
+    if(status === 'overdue') matchStatus = dl.days <= 0 && c.stage < 6;
+    if(status === 'warning') matchStatus = dl.days > 0 && dl.days <= 7 && c.stage < 6;
+    if(status === 'normal') matchStatus = dl.days > 7 && c.stage < 6;
+    
+    return matchQ && matchType && matchStatus;
+  });
+
+  if(!list.length) { tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:30px;color:#94a3b8">无匹配数据</td></tr>`; return; }
+
+  tbody.innerHTML = list.map(c => {
+    const dl = calcDeadLine(c);
+    const stageInfo = STAGES.find(s=>s.id === (c.stage||1));
+    
+    let daysHtml = '';
+    if(c.stage >= 6) daysHtml = `<span class="tag blue">已结案</span>`;
+    else if(dl.days <= 0) daysHtml = `<span class="tag red">逾期 ${Math.abs(dl.days)} 天</span>`;
+    else if(dl.days <= 7) daysHtml = `<span class="tag orange">剩余 ${dl.days} 天</span>`;
+    else daysHtml = `<span class="tag blue">剩余 ${dl.days} 天</span>`;
+
+    const typeTag = c.entType === '事故案件' ? 'tag purple' : 'tag' + (c.entType==='矿山'?' orange':' blue');
+    
+    return `<tr>
+      <td>
+        <div style="font-weight:bold">${c.entName}</div>
+        <div style="font-size:12px;color:#64748b">${c.caseNumber}</div>
+      </td>
+      <td><span class="${typeTag}" style="background:#f1f5f9;color:#475569">${c.entType}</span></td>
+      <td>${c.handler}</td>
+      <td><b style="color:var(--primary)">${stageInfo ? stageInfo.n : '-'}</b></td>
+      <td>${dl.date} ${dl.isAccident?'<br><span style="font-size:10px;color:red">事故60日限</span>':''}</td>
+      <td>${daysHtml}</td>
+      <td style="text-align:right">
+        <button class="btn outline sm" onclick="openDetail('${c._id}')">详情</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function openDetail(id) {
+  CURRENT_ID = id;
+  const c = ALL_CASES.find(x => x._id === id);
+  CURRENT_DATA = c;
+
+  // 填充表单
+  document.getElementById('i_no').value = c.caseNumber;
+  document.getElementById('i_name').value = c.entName;
+  document.getElementById('i_type').value = c.entType;
+  document.getElementById('i_handler').value = c.handler;
+  document.getElementById('i_date').value = c.registerDate;
+  document.getElementById('i_limit').value = c.decisionLimit;
+  
+  handleTypeChange(); // 触发事故锁定逻辑
+  
+  // 渲染时间轴
+  const tlBox = document.getElementById('timeline_box');
+  if(c.timeline && c.timeline.length) {
+    tlBox.innerHTML = c.timeline.map(t => 
+      `<div style="margin-bottom:8px;padding-bottom:8px;border-bottom:1px dashed #e2e8f0">
+         <span style="color:#64748b;font-size:12px;margin-right:8px">${t.t}</span>
+         <span>${t.txt}</span>
+       </div>`
+    ).join('');
+  } else {
+    tlBox.innerHTML = '<div style="color:#94a3b8;font-size:12px;text-align:center">暂无记录</div>';
+  }
+
+  document.getElementById('view_stage').textContent = STAGES.find(s=>s.id === (c.stage||1))?.n;
+  document.getElementById('btn_del').style.display = 'inline-flex';
+  
+  document.getElementById('detailModal').classList.add('show');
+}
+
+function openNewCase() {
+  CURRENT_ID = null;
+  CURRENT_DATA = null;
+  
+  // 清空表单
+  ['i_no','i_name','i_handler'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('i_date').value = todayStr();
+  document.getElementById('i_type').value = '矿山';
+  document.getElementById('i_limit').value = '90';
+  handleTypeChange();
+  
+  document.getElementById('timeline_box').innerHTML = '新案件暂无记录';
+  document.getElementById('view_stage').textContent = '待保存';
+  document.getElementById('btn_del').style.display = 'none';
+  
+  document.getElementById('detailModal').classList.add('show');
+}
+
+function handleTypeChange() {
+  const t = val('i_type');
+  const isAcc = t === '事故案件';
+  const lim = document.getElementById('i_limit');
+  const hint = document.getElementById('acc_hint');
+  
+  if(isAcc) {
+    lim.value = '60'; // 这里的value仅用于显示，实际计算逻辑在 calcDeadLine
+    lim.disabled = true;
+    hint.style.display = 'block';
+  } else {
+    lim.disabled = false;
+    hint.style.display = 'none';
+  }
+}
+
+function calcDeadLine(c) {
+  if(!c.registerDate) return { days:0, date:'-', isAccident:false };
+  const isAcc = c.entType === '事故案件';
+  const limit = isAcc ? 60 : parseInt(c.decisionLimit || 90);
+  
+  const start = new Date(c.registerDate);
+  const end = new Date(start);
+  end.setDate(start.getDate() + limit);
+  
+  const now = new Date(); now.setHours(0,0,0,0);
+  // 自然日计算
+  const diff = Math.ceil((end - now) / (1000 * 60 * 60 * 24));
+  const dateStr = end.toISOString().split('T')[0];
+  
+  return { days: diff, date: dateStr, isAccident: isAcc };
+}
+
+function calcStats() {
+  let total=ALL_CASES.length, over=0, acc=0, ok=0;
+  ALL_CASES.forEach(c => {
+    if(c.entType === '事故案件') acc++;
+    if(c.stage >= 6) return;
+    const d = calcDeadLine(c).days;
+    if(d <= 0) over++; else ok++;
+  });
+  document.getElementById('s_total').textContent = total;
+  document.getElementById('s_over').textContent = over;
+  document.getElementById('s_acc').textContent = acc;
+  document.getElementById('s_ok').textContent = ok;
+}
+
+// 导出 Excel
+function exportExcel() {
+  if(!ALL_CASES.length) return toast('无数据可导出','error');
+  const rows = ALL_CASES.map(c => {
+    const dl = calcDeadLine(c);
+    return {
+      "案件编号": c.caseNumber,
+      "企业名称": c.entName,
+      "类型": c.entType,
+      "立案日期": c.registerDate,
+      "截止日期": dl.date,
+      "剩余天数": c.stage>=6 ? '已结案' : dl.days,
+      "当前阶段": STAGES.find(s=>s.id===c.stage)?.n
+    }
+  });
+  const ws = XLSX.utils.json_to_sheet(rows);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "案件台账");
+  XLSX.writeFile(wb, `托里县应急_案件云台账_${todayStr()}.xlsx`);
+}
+
+// 通用工具
+function val(id) { return document.getElementById(id).value; }
+function todayStr() { return new Date().toISOString().split('T')[0]; }
+function closeModal() { document.getElementById('detailModal').classList.remove('show'); }
+function showLoading(show) { document.getElementById('loading').className = show ? '' : 'hidden'; }
+function toast(msg, type='success') {
   const t = document.createElement('div');
-  t.className = `toast ${type}`;
-  t.innerHTML = `<span>${type==='error'?'⚠️':'✅'}</span> ${msg}`;
-  document.getElementById('toast-container').appendChild(t);
+  t.className = 'toast';
+  if(type==='error') { t.style.borderLeftColor = '#dc2626'; t.innerHTML = '❌ ' + msg; }
+  else { t.innerHTML = '✅ ' + msg; }
+  document.getElementById('toastBox').appendChild(t);
   setTimeout(()=>t.remove(), 3000);
 }
 
-function getDead(c){
-  if(!c.registerDate) return {days:null, date:'-'};
-  const start = new Date(c.registerDate);
-  // 核心逻辑：事故案件强制60天，其他按设定
-  const limit = (c.entType === '事故案件') ? 60 : parseInt(c.decisionLimit||90);
-  start.setDate(start.getDate() + limit);
-  const now = new Date(); now.setHours(0,0,0,0);
-  const days = Math.ceil((start - now)/(86400000));
-  return { days, date: start.toISOString().split('T')[0], isAccident: c.entType === '事故案件' };
-}
+// 启动
+refreshData();
 
-async function load(){
-  cases = await db.getAll();
-  cases.sort((a,b)=>(b.updated||'').localeCompare(a.updated||''));
-  render();
-  // KPI
-  let total=cases.length, over=0, acc=0, norm=0;
-  cases.forEach(c=>{
-    if(c.entType==='事故案件') acc++;
-    if(c.stage>=6) return;
-    const d = getDead(c).days;
-    if(d<=0) over++; else norm++;
-  });
-  document.getElementById('kpi-total').textContent = total;
-  document.getElementById('kpi-overdue').textContent = over;
-  document.getElementById('kpi-accident').textContent = acc;
-  document.getElementById('kpi-normal').textContent = norm;
-}
-
-function render(){
-  const body = document.getElementById('tableBody');
-  const q = document.getElementById('searchInput').value.trim();
-  const fType = document.getElementById('filterType').value;
-  
-  body.innerHTML = cases.filter(c => {
-    return (!q || (c.caseNumber+c.entName).includes(q)) && (!fType || c.entType===fType);
-  }).map(c => {
-    const d = getDead(c);
-    const sName = STAGES.find(x=>x.id===c.stage)?.name||'-';
-    let badge = d.days<=0 ? 'red' : (d.days<=7 ? 'orange' : 'blue');
-    if(c.stage>=6) badge='blue';
-    const typeBadge = c.entType==='事故案件' ? 'badge purple' : 'badge gray';
-    
-    return `<tr>
-      <td><b>${c.entName}</b><div style="font-size:12px;color:#64748b">${c.caseNumber}</div></td>
-      <td><span class="${typeBadge}">${c.entType}</span></td>
-      <td>${c.handler}</td>
-      <td><span style="color:#2563eb;font-weight:bold">${sName}</span></td>
-      <td>${d.date} ${d.isAccident?'<span style="font-size:10px;color:red">(60日)</span>':''}</td>
-      <td>${c.stage>=6 ? '已结案' : `<span class="badge ${badge}">${d.days}天</span>`}</td>
-      <td style="text-align:right"><button class="btn outline" onclick="openDetail('${c.id}')">详情</button></td>
-    </tr>`;
-  }).join('') || '<tr><td colspan="7" style="text-align:center;padding:20px;color:#94a3b8">无数据</td></tr>';
-}
-
-// Event Listeners
-document.getElementById('btnNewCase').onclick = () => {
-  curId = null;
-  ['inp_caseNumber','inp_entName','inp_handler','inp_regDate'].forEach(i=>document.getElementById(i).value='');
-  document.getElementById('inp_limit').value = "90";
-  document.getElementById('inp_entType').value = "矿山";
-  document.getElementById('accidentHint').style.display='none';
-  document.getElementById('inp_limit').disabled = false;
-  document.getElementById('timelineList').innerHTML='';
-  document.getElementById('fileListArea').innerHTML='';
-  document.getElementById('detailModal').classList.add('open');
-};
-
-document.getElementById('inp_entType').onchange = (e) => {
-  const isAcc = e.target.value === '事故案件';
-  const limitSel = document.getElementById('inp_limit');
-  const hint = document.getElementById('accidentHint');
-  
-  if(isAcc){
-    limitSel.disabled = true;
-    hint.style.display = 'block';
-    toast('⚠️ 已选择事故案件，时限自动锁定为60日！', 'error');
-  } else {
-    limitSel.disabled = false;
-    hint.style.display = 'none';
-  }
-};
-
-window.openDetail = async (id) => {
-  curId = id;
-  const c = cases.find(x=>x.id===id);
-  document.getElementById('inp_caseNumber').value = c.caseNumber;
-  document.getElementById('inp_entName').value = c.entName;
-  document.getElementById('inp_entType').value = c.entType;
-  document.getElementById('inp_regDate').value = c.registerDate;
-  document.getElementById('inp_handler').value = c.handler;
-  document.getElementById('inp_limit').value = c.decisionLimit;
-  
-  // Trigger logic for accident lock
-  const isAcc = c.entType === '事故案件';
-  document.getElementById('inp_limit').disabled = isAcc;
-  document.getElementById('accidentHint').style.display = isAcc ? 'block' : 'none';
-
-  document.getElementById('view_stage').textContent = STAGES.find(x=>x.id===c.stage)?.name;
-  document.getElementById('view_next_stage').textContent = STAGES.find(x=>x.id===c.stage+1)?.name || '无';
-  
-  const tl = document.getElementById('timelineList');
-  tl.innerHTML = (c.timeline||[]).map(t=>`<div style="margin-top:10px"><div style="font-size:12px;color:#64748b">${t.date}</div><div>${t.text}</div></div>`).join('');
-  
-  renderFiles(id);
-  document.getElementById('detailModal').classList.add('open');
-};
-
-window.closeModal = () => document.getElementById('detailModal').classList.remove('open');
-
-document.getElementById('btnSaveBase').onclick = async () => {
-  const data = {
-    id: curId || Date.now().toString(),
-    caseNumber: document.getElementById('inp_caseNumber').value,
-    entName: document.getElementById('inp_entName').value,
-    entType: document.getElementById('inp_entType').value,
-    registerDate: document.getElementById('inp_regDate').value,
-    handler: document.getElementById('inp_handler').value,
-    decisionLimit: document.getElementById('inp_limit').value,
-    updated: new Date().toISOString()
-  };
-  
-  if(!data.entName) return toast('企业名称必填','error');
-  
-  if(!curId){
-    data.stage = 1;
-    data.timeline = [{date:new Date().toISOString().split('T')[0], text:'案件建立'}];
-    curId = data.id;
-  } else {
-    const old = cases.find(x=>x.id===curId);
-    data.stage = old.stage; data.timeline = old.timeline;
-  }
-  
-  await db.put(data);
-  toast('保存成功');
-  load();
-};
-
-document.getElementById('btnUpdateProg').onclick = async () => {
-  if(!curId) return;
-  const c = cases.find(x=>x.id===curId);
-  const note = document.getElementById('inp_progNote').value;
-  const date = document.getElementById('inp_progDate').value || new Date().toISOString().split('T')[0];
-  
-  if(c.stage < 6) c.stage++;
-  c.timeline.push({date, text:`${STAGES.find(x=>x.id===c.stage)?.name}：${note}`});
-  c.updated = new Date().toISOString();
-  await db.put(c);
-  toast('进度已更新');
-  openDetail(curId); // refresh
-  load();
-};
-
-document.getElementById('btnDelete').onclick = async () => {
-  if(!confirm('确定删除？无法恢复！')) return;
-  await db.del(curId);
-  closeModal();
-  load();
-};
-
-// File Logic
-document.getElementById('btnUploadFile').onclick = async () => {
-  if(!curId) return toast('请先保存基本信息','error');
-  const file = document.getElementById('inp_file').files[0];
-  if(!file) return;
-  
-  await db.addFile({
-    id: Date.now().toString(), cid: curId,
-    name: file.name, type: file.type, blob: file,
-    date: new Date().toISOString()
-  });
-  toast('上传成功');
-  renderFiles(curId);
-};
-
-async function renderFiles(cid){
-  const files = await db.getFiles(cid);
-  const box = document.getElementById('fileListArea');
-  box.innerHTML = files.map(f=>`
-    <div style="display:flex;justify-content:space-between;background:#f8fafc;padding:8px;margin-top:5px;border:1px solid #e2e8f0">
-      <a href="#" onclick="dlFile('${f.id}')">${f.name}</a>
-      <span style="color:red;cursor:pointer" onclick="rmFile('${f.id}')">删除</span>
-    </div>
-  `).join('');
-}
-
-window.dlFile = async (fid) => {
-  const db_ = await db.open();
-  const f = await new Promise(r=>db_.transaction(DB_CFG.fileStore).objectStore(DB_CFG.fileStore).get(fid).onsuccess=e=>r(e.target.result));
-  const url = URL.createObjectURL(f.blob);
-  const a = document.createElement('a'); a.href=url; a.download=f.name; a.click();
-};
-
-window.rmFile = async (fid) => {
-  if(confirm('删除文件？')) { await db.delFile(fid); renderFiles(curId); }
-};
-
-// Init
-document.getElementById('inp_regDate').value = new Date().toISOString().split('T')[0];
-document.getElementById('filterType').onchange = load;
-document.getElementById('searchInput').oninput = load;
-load();
 </script>
 </body>
 </html>
