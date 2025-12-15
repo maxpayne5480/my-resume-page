@@ -4,8 +4,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <title>托里县应急管理局｜案件云端协作平台</title>
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@vikadata/vika@latest/dist/vika.browser.js"></script>
+  <script src="https://cdn.sheetjs.com/xlsx-0.19.3/package/dist/xlsx.full.min.js"></script>
+  <script src="https://unpkg.com/@vikadata/vika@latest/dist/vika.browser.js"></script>
 
   <style>
     /* === 核心视觉：Clean Enterprise v2.0 (云端版蓝紫配色) === */
@@ -247,8 +247,17 @@ if(!VIKA_TOKEN || !DATASHEET_ID) {
 }
 
 // 初始化 API
-const vika = Vika.auth({ token: VIKA_TOKEN });
-const datasheet = vika.datasheet(DATASHEET_ID);
+// 增加容错：如果网络问题导致 Vika 没加载，这里会捕获错误而不是直接白屏
+try {
+  if (typeof Vika === 'undefined') {
+    throw new Error('Vika 库未加载成功');
+  }
+  const vika = Vika.auth({ token: VIKA_TOKEN });
+  var datasheet = vika.datasheet(DATASHEET_ID); // 改为 var 提升作用域
+} catch(e) {
+  alert("❌ 无法连接到网络库！\n\n可能是网络屏蔽了 CDN 链接。\n请尝试方案 B（下载文件到本地）。\n\n技术错误：" + e.message);
+  showLoading(false); // 关闭遮罩，至少让你看到界面
+}
 
 // 全局数据缓存
 let ALL_CASES = [];
@@ -264,6 +273,7 @@ const STAGES = [
 
 // 1. 获取数据 (Read)
 async function refreshData() {
+  if (typeof datasheet === 'undefined') return; // 如果初始化失败，停止执行
   showLoading(true);
   try {
     const res = await datasheet.records.query({ pageSize: 1000 });
