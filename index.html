@@ -3,224 +3,55 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>托里县应急管理局</title>
+  <title>托里县应急管理局｜工作台</title>
   <style>
-    :root{
-      --bg:#f3f6fb;
-      --card:#ffffff;
-      --text:#0b1220;
-      --muted:#516078;
-      --line:#e3eaf6;
-      --blue:#1d4ed8;
-      --red:#dc2626;
-      --shadow:0 18px 50px rgba(2,6,23,.12);
-      --radius:22px;
+    body {
+      margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh;
+      background: radial-gradient(circle at top right, #eff6ff, #f8fafc);
+      font-family: "Microsoft YaHei", sans-serif; color: #0f172a;
     }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family:"Microsoft YaHei",system-ui,-apple-system,Segoe UI,Arial;
-      color:var(--text);
-      background:
-        radial-gradient(1200px 600px at 20% 0%, rgba(29,78,216,.10), transparent 60%),
-        radial-gradient(900px 500px at 80% 10%, rgba(220,38,38,.09), transparent 55%),
-        linear-gradient(180deg, #f6f9ff 0%, #f3f6fb 45%, #eef3fb 100%);
+    .container { text-align: center; width: 100%; max-width: 600px; padding: 20px; }
+    .logo { width: 80px; height: 80px; background: linear-gradient(135deg, #2563eb, #dc2626); border-radius: 20px; margin: 0 auto 24px; display: grid; place-items: center; color: white; font-size: 32px; font-weight: bold; box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.4); }
+    h1 { margin: 0 0 8px; font-size: 28px; letter-spacing: -0.5px; }
+    p { color: #64748b; margin: 0 0 40px; }
+    
+    .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .card {
+      display: block; text-decoration: none; background: #fff; padding: 30px 20px;
+      border-radius: 16px; border: 1px solid #e2e8f0; color: inherit;
+      transition: transform 0.2s, box-shadow 0.2s;
     }
-    a{color:inherit;text-decoration:none}
-
-    .wrap{max-width:1440px;margin:0 auto;padding:30px 22px 56px}
-    .hero{
-      position:relative;
-      border:1px solid var(--line);
-      border-radius:28px;
-      background:linear-gradient(135deg, rgba(29,78,216,.12), rgba(220,38,38,.10));
-      box-shadow:var(--shadow);
-      overflow:hidden;
-      padding:26px 26px 24px;
-    }
-    .hero::before{
-      content:"";
-      position:absolute;inset:-80px -120px auto auto;
-      width:420px;height:420px;border-radius:999px;
-      background:radial-gradient(circle at 30% 30%, rgba(220,38,38,.18), transparent 60%);
-      filter:blur(2px);
-    }
-    .hero::after{
-      content:"";
-      position:absolute;left:-60px;top:-60px;
-      width:380px;height:380px;border-radius:999px;
-      background:radial-gradient(circle at 40% 40%, rgba(29,78,216,.18), transparent 62%);
-      filter:blur(2px);
-    }
-
-    .heroTop{display:flex;align-items:center;justify-content:space-between;gap:18px;position:relative}
-    .brand{display:flex;align-items:center;gap:16px}
-    .emblem{
-      width:62px;height:62px;border-radius:18px;
-      background:linear-gradient(135deg, var(--blue), var(--red));
-      box-shadow:0 24px 42px rgba(29,78,216,.22);
-      display:grid;place-items:center;color:#fff;flex:0 0 auto;
-    }
-    .brandText h1{
-      margin:0;
-      font-size:26px;
-      letter-spacing:.4px;
-      font-weight:1000;
-    }
-    .brandText .sub{
-      margin-top:6px;
-      color:rgba(11,18,32,.70);
-      font-size:14px;
-      font-weight:800;
-    }
-
-    .heroStripe{
-      margin-top:18px;
-      height:14px;border-radius:999px;
-      background:
-        repeating-linear-gradient(135deg,
-          rgba(220,38,38,.95) 0 14px,
-          rgba(220,38,38,.95) 14px 28px,
-          rgba(29,78,216,.95) 28px 42px,
-          rgba(29,78,216,.95) 42px 56px
-        );
-      opacity:.55;
-      position:relative;
-    }
-
-    .grid{
-      margin-top:18px;
-      display:grid;
-      grid-template-columns:repeat(2, minmax(0,1fr));
-      gap:18px;
-    }
-    .tile{
-      position:relative;
-      background:var(--card);
-      border:1px solid var(--line);
-      border-radius:28px;
-      box-shadow:var(--shadow);
-      padding:26px;
-      overflow:hidden;
-      min-height:240px;
-      display:flex;flex-direction:column;justify-content:space-between;
-    }
-    .tile::before{
-      content:"应急";
-      position:absolute;right:18px;bottom:10px;
-      font-size:92px;font-weight:1000;
-      color:rgba(11,18,32,.06);
-      letter-spacing:6px;
-      transform:skewX(-8deg);
-      user-select:none;
-      pointer-events:none;
-    }
-    .tileHead{
-      display:flex;align-items:center;justify-content:space-between;gap:12px;
-      position:relative;
-    }
-    .tileHead h2{
-      margin:0;
-      font-size:22px;
-      font-weight:1000;
-      letter-spacing:.2px;
-    }
-    .badge{
-      display:inline-flex;align-items:center;gap:8px;
-      padding:10px 12px;border-radius:999px;
-      border:1px solid rgba(29,78,216,.22);
-      background:rgba(29,78,216,.08);
-      color:var(--blue);
-      font-weight:1000;
-      font-size:12px;
-      white-space:nowrap;
-    }
-    .badge.red{
-      border-color:rgba(220,38,38,.22);
-      background:rgba(220,38,38,.08);
-      color:var(--red);
-    }
-    .ctaRow{display:flex;gap:12px;flex-wrap:wrap;position:relative}
-    .btn{
-      display:inline-flex;align-items:center;justify-content:center;gap:10px;
-      padding:16px 18px;
-      border-radius:18px;
-      border:none;
-      cursor:pointer;
-      font-weight:1000;
-      font-size:15px;
-      background:var(--blue);
-      color:#fff;
-      min-width:220px;
-      box-shadow:0 18px 40px rgba(29,78,216,.18);
-      transition:transform .08s ease, filter .08s ease;
-    }
-    .btn:hover{transform:translateY(-1px);filter:brightness(1.03)}
-    .btn.red{background:var(--red);box-shadow:0 18px 40px rgba(220,38,38,.18)}
-    .btn.ghost{
-      background:#fff;color:#0b1220;border:1px solid var(--line);
-      box-shadow:none;
-      min-width:auto;
-    }
-
-    .foot{
-      margin-top:16px;
-      display:flex;justify-content:flex-end;
-      color:rgba(11,18,32,.55);
-      font-size:12px;font-weight:800;
-    }
-
-    @media (max-width: 980px){
-      .grid{grid-template-columns:1fr}
-      .btn{width:100%}
-      .tile{min-height:220px}
-    }
+    .card:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); border-color: #2563eb; }
+    .icon { font-size: 32px; margin-bottom: 12px; }
+    .card-title { font-weight: bold; font-size: 18px; margin-bottom: 4px; }
+    .card-desc { font-size: 13px; color: #94a3b8; }
+    
+    @media(max-width: 480px){ .menu-grid { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <section class="hero" aria-label="托里县应急管理局门户">
-      <div class="heroTop">
-        <div class="brand">
-          <div class="emblem" aria-hidden="true">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-              <path d="M12 2l7 4v6c0 5-3 9-7 10-4-1-7-5-7-10V6l7-4z" stroke="white" stroke-width="2" />
-              <path d="M8 12l2.2 2.2L16 8.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </div>
-          <div class="brandText">
-            <h1>托里县应急管理局</h1>
-            <div class="sub">行政处罚案件管理</div>
-          </div>
-        </div>
-        <a class="btn ghost" href="./training.html" title="进入培训口径">培训口径</a>
-      </div>
-      <div class="heroStripe" aria-hidden="true"></div>
-    </section>
-
-    <section class="grid" aria-label="入口">
-      <div class="tile">
-        <div class="tileHead">
-          <h2>案件管理</h2>
-          <span class="badge">办案进度</span>
-        </div>
-        <div class="ctaRow">
-          <a class="btn" href="./case-management.html">进入系统</a>
-        </div>
-      </div>
-
-      <div class="tile">
-        <div class="tileHead">
-          <h2>培训与口径</h2>
-          <span class="badge red">时间线</span>
-        </div>
-        <div class="ctaRow">
-          <a class="btn red" href="./training.html">进入页面</a>
-        </div>
-      </div>
-    </section>
-
-    <div class="foot">托里县应急管理局｜内部使用</div>
+  <div class="container">
+    <div class="logo">安</div>
+    <h1>托里县应急管理局</h1>
+    <p>行政处罚案件综合管理系统</p>
+    
+    <div class="menu-grid">
+      <a href="./case-management.html" class="card">
+        <div class="icon">📂</div>
+        <div class="card-title">案件管理</div>
+        <div class="card-desc">立案、调查、归档、期限预警</div>
+      </a>
+      
+      <a href="./training.html" class="card">
+        <div class="icon">📚</div>
+        <div class="card-title">培训与口径</div>
+        <div class="card-desc">时限标准、组卷规范、计算器</div>
+      </a>
+    </div>
+    
+    <div style="margin-top: 40px; font-size: 12px; color: #cbd5e1;">
+      仅供内部使用 · 本地数据存储
+    </div>
   </div>
 </body>
 </html>
