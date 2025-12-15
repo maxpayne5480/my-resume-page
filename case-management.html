@@ -205,8 +205,8 @@
             </div>
           </div>
           <div style="margin-top:20px;text-align:right;display:flex;justify-content:flex-end;gap:10px">
-             <button class="btn primary" style="background:var(--danger)" onclick="deleteCase()" id="btn_del">删除案件</button>
-             <button class="btn primary" onclick="saveCase()">💾 保存基本信息</button>
+              <button class="btn primary" style="background:var(--danger)" onclick="deleteCase()" id="btn_del">删除案件</button>
+              <button class="btn primary" onclick="saveCase()">💾 保存基本信息</button>
           </div>
         </div>
 
@@ -235,11 +235,11 @@
 <script>
 /**
  * =======================================================
- * ⚠️ 配置区：请在此处填入你的维格表 Token 和 ID
+ * ⚠️ 配置区：已填入你的维格表 Token 和 ID
  * =======================================================
  */
-const VIKA_TOKEN = 'uskiO2vJEiSUFADER9XIlEd';      // 例如: 'uskXyZ...'
-const DATASHEET_ID = 'dstxQf2SXq5boYq549';    // 例如: 'dst123...'
+const VIKA_TOKEN = 'uskiO2vJEiSUFADER9XIlEd';      // 你的Token
+const DATASHEET_ID = 'dstxQf2SXq5boYq549';     // 你的表ID
 
 // 检查是否配置
 if(!VIKA_TOKEN || !DATASHEET_ID) {
@@ -594,8 +594,4 @@ function toast(msg, type='success') {
 refreshData();
 </script>
 </body>
-</script>
-</body>
 </html>
-
-
