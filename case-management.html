@@ -9,9 +9,9 @@
   <script src="https://npm.elemecdn.com/@vikadata/vika@latest/dist/vika.browser.js"></script>
 
   <style>
-    /* === 核心视觉：Clean Enterprise v2.0 (云端版蓝紫配色) === */
+    /* === 核心视觉：Clean Enterprise v2.0 === */
     :root {
-      --primary: #4f46e5;       /* 靛蓝：代表云端/互联 */
+      --primary: #4f46e5;
       --primary-hover: #4338ca;
       --primary-light: #eef2ff;
       --danger: #dc2626; --danger-bg: #fef2f2;
@@ -30,7 +30,6 @@
 
     .app-wrap { max-width: 1200px; margin: 0 auto; padding: 20px; }
 
-    /* 顶部栏 */
     .header {
       background: var(--surface); padding: 16px 24px; border-radius: var(--radius);
       box-shadow: var(--shadow); display: flex; justify-content: space-between; align-items: center;
@@ -48,13 +47,11 @@
     .online-badge::before { content:""; width:6px; height:6px; background:#059669; border-radius:50%; animation: pulse 2s infinite; }
     @keyframes pulse { 0%{opacity:1} 50%{opacity:0.4} 100%{opacity:1} }
 
-    /* 统计卡片 */
     .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
     .stat-card { background: var(--surface); padding: 20px; border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--border); }
     .stat-t { font-size: 13px; color: var(--text-muted); margin-bottom: 6px; font-weight: 600; }
     .stat-v { font-size: 26px; font-weight: 800; letter-spacing: -0.5px; }
 
-    /* 表格区域 */
     .main-card { background: var(--surface); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; border: 1px solid var(--border); }
     .toolbar { padding: 16px; border-bottom: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; background: #f8fafc; }
     
@@ -69,14 +66,12 @@
     td { padding: 14px 16px; border-bottom: 1px solid var(--border); font-size: 14px; color: #334155; vertical-align: middle; }
     tr:hover td { background: #f8fafc; }
 
-    /* 状态标签 */
     .tag { display: inline-flex; padding: 4px 10px; border-radius: 99px; font-size: 12px; font-weight: 700; line-height: 1; }
     .tag.blue { background: var(--primary-light); color: var(--primary); }
     .tag.red { background: var(--danger-bg); color: var(--danger); }
     .tag.orange { background: var(--warning-bg); color: var(--warning); }
-    .tag.purple { background: #f3e8ff; color: #7e22ce; border: 1px solid #d8b4fe; } /* 事故案件专用 */
+    .tag.purple { background: #f3e8ff; color: #7e22ce; border: 1px solid #d8b4fe; }
 
-    /* 按钮 */
     .btn { display: inline-flex; align-items: center; justify-content: center; padding: 10px 18px; border-radius: 8px; border: none; font-size: 14px; font-weight: 600; cursor: pointer; transition: 0.2s; gap: 6px; }
     .btn.primary { background: var(--primary); color: #fff; box-shadow: 0 2px 5px rgba(79, 70, 229, 0.3); }
     .btn.primary:hover { background: var(--primary-hover); transform: translateY(-1px); }
@@ -84,7 +79,6 @@
     .btn.outline:hover { background: #f8fafc; border-color: #cbd5e1; }
     .btn.sm { padding: 6px 12px; font-size: 12px; }
 
-    /* 弹窗 */
     .modal-mask { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); z-index: 99; display: none; place-items: center; padding: 20px; }
     .modal-mask.show { display: grid; }
     .modal { background: #fff; width: 100%; max-width: 850px; border-radius: 16px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
@@ -96,11 +90,9 @@
     .form-input { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; }
     .form-input:disabled { background: #f1f5f9; color: #94a3b8; cursor: not-allowed; }
 
-    /* Loading 遮罩 */
-    #loading { position: fixed; inset: 0; background: rgba(255,255,255,0.8); z-index: 999; display: grid; place-items: center; font-weight: bold; color: var(--primary); }
+    #loading { position: fixed; inset: 0; background: rgba(255,255,255,0.95); z-index: 999; display: flex; flex-direction: column; justify-content: center; align-items: center; font-weight: bold; color: var(--primary); gap: 15px; }
     .hidden { display: none !important; }
 
-    /* Toast */
     .toast-box { position: fixed; top: 20px; right: 20px; z-index: 1000; display: flex; flex-direction: column; gap: 10px; }
     .toast { background: #fff; padding: 12px 16px; border-radius: 8px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); border-left: 4px solid var(--primary); font-size: 14px; font-weight: 600; animation: slideIn 0.3s; }
     @keyframes slideIn { from{transform:translateX(100%)} to{transform:translateX(0)} }
@@ -108,7 +100,11 @@
 </head>
 <body>
 
-  <div id="loading">正在连接云端数据库...</div>
+  <div id="loading">
+    <div id="loading_txt">📡 正在连接云端数据库...</div>
+    <div id="loading_err" style="color:#dc2626;font-size:12px;font-weight:normal;display:none;text-align:center;line-height:1.6;max-width:300px"></div>
+    <button id="loading_retry" class="btn outline sm" style="display:none" onclick="location.reload()">🔄 点击重试</button>
+  </div>
 
   <div class="toast-box" id="toastBox"></div>
 
@@ -179,7 +175,6 @@
         <button class="btn outline sm" onclick="closeModal()">关闭</button>
       </div>
       <div class="modal-body">
-        
         <div style="background:#f8fafc;padding:20px;border-radius:12px;margin-bottom:20px;border:1px solid #e2e8f0">
           <div class="form-grid">
             <div class="form-item"><label>案件编号</label><input class="form-input" id="i_no" placeholder="托应急罚〔2025〕xx号"></div>
@@ -210,7 +205,6 @@
               <button class="btn primary" onclick="saveCase()">💾 保存基本信息</button>
           </div>
         </div>
-
         <h4 style="margin:0 0 10px 0;border-left:4px solid var(--primary);padding-left:10px">进度追踪</h4>
         <div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:15px">
            <div style="display:flex;gap:10px;margin-bottom:15px">
@@ -219,16 +213,13 @@
              </div>
              <button class="btn outline sm" onclick="updateProgress()">➕ 更新至下一阶段</button>
            </div>
-           
            <div id="timeline_box" style="font-size:14px;color:#334155;max-height:200px;overflow-y:auto"></div>
         </div>
-
         <div style="margin-top:20px;padding:12px;background:#fffbeb;color:#b45309;font-size:13px;border-radius:8px;border:1px solid #fcd34d">
           ⚠️ <b>云端版限制提示：</b><br>
           由于使用免费云数据库，本版本仅同步文字信息（案件台账、进度、时限）。<br>
           大体积的执法文书、视频证据，请在单位内网电脑存档，或通过微信/钉钉单独传输。
         </div>
-
       </div>
     </div>
   </div>
@@ -247,10 +238,273 @@ if(!VIKA_TOKEN || !DATASHEET_ID) {
   alert("⚠️ 请先在 HTML 代码中填入 VIKA_TOKEN 和 DATASHEET_ID！\n\n请使用文本编辑器打开此文件进行编辑。");
 }
 
-// 初始化 API
-// 增加容错：如果网络问题导致 Vika 没加载，这里会捕获错误而不是直接白屏
+// 初始化 API (增加网络错误捕获)
 try {
   if (typeof Vika === 'undefined') {
-    throw new Error('Vika 库未加载成功，请检查网络或更换 CDN');
+    throw new Error('网络库加载失败 (Vika not defined)');
   }
-  const vika = Vika.
+  const vika = Vika.auth({ token: VIKA_TOKEN });
+  var datasheet = vika.datasheet(DATASHEET_ID);
+} catch(e) {
+  // 如果这里报错，说明阿里的源也被墙了，或者网络极差
+  document.getElementById('loading_txt').innerHTML = '❌ 网络环境不支持';
+  document.getElementById('loading_err').style.display = 'block';
+  document.getElementById('loading_err').innerHTML = '系统无法加载核心组件。<br>原因：您当前的网络（新疆/内网）屏蔽了外部程序库。<br><br>技术错误：' + e.message;
+  document.getElementById('loading_retry').style.display = 'inline-flex';
+}
+
+// 全局数据缓存
+let ALL_CASES = [];
+let CURRENT_ID = null;
+let CURRENT_DATA = null;
+
+const STAGES = [
+  {id:1,n:"立案登记/事故发生"},{id:2,n:"调查取证"},{id:3,n:"事先告知"},
+  {id:4,n:"决定作出/报告提交"},{id:5,n:"送达执行"},{id:6,n:"结案归档"}
+];
+
+// === 核心功能函数 ===
+
+async function refreshData() {
+  if (typeof datasheet === 'undefined') return;
+  showLoading(true);
+  try {
+    const res = await datasheet.records.query({ pageSize: 1000 });
+    if(res.success) {
+      ALL_CASES = res.data.records.map(rec => {
+        let parsed = {};
+        try {
+          parsed = JSON.parse(rec.fields['data_json']);
+        } catch(e) { parsed = {} }
+        return { _id: rec.recordId, ...parsed };
+      }).filter(c => c.caseNumber);
+
+      renderTable();
+      calcStats();
+      toast('数据已从云端同步');
+    } else {
+      toast('同步失败: ' + res.message, 'error');
+    }
+  } catch(e) {
+    console.error(e);
+    // 这里如果报错，说明库加载了，但是连不上维格表服务器
+    toast('网络错误，无法连接数据库', 'error');
+  }
+  showLoading(false);
+}
+
+async function saveCase() {
+  const data = getFormData();
+  if(!data.caseNumber || !data.entName) return toast('编号和企业名称必填','error');
+  showLoading(true);
+  try {
+    if(CURRENT_DATA) {
+      data.stage = CURRENT_DATA.stage;
+      data.timeline = CURRENT_DATA.timeline;
+      data.createTime = CURRENT_DATA.createTime;
+    } else {
+      data.stage = 1;
+      data.timeline = [{t: todayStr(), txt: '案件创建(云端登记)'}];
+      data.createTime = new Date().toISOString();
+    }
+    const jsonStr = JSON.stringify(data);
+
+    if(CURRENT_ID) {
+      await datasheet.records.update([{
+        recordId: CURRENT_ID,
+        fields: { 'title': data.caseNumber, 'data_json': jsonStr }
+      }]);
+      toast('修改已保存至云端');
+    } else {
+      await datasheet.records.create([{
+        fields: { 'title': data.caseNumber, 'data_json': jsonStr }
+      }]);
+      toast('新案件已上传云端');
+    }
+    closeModal();
+    refreshData();
+  } catch(e) {
+    console.error(e);
+    toast('保存失败','error');
+  }
+  showLoading(false);
+}
+
+async function deleteCase() {
+  if(!CURRENT_ID) return;
+  if(!confirm('⚠️ 警告：确定要从云数据库彻底删除此案件吗？')) return;
+  showLoading(true);
+  try {
+    await datasheet.records.delete([CURRENT_ID]);
+    toast('案件已删除');
+    closeModal();
+    refreshData();
+  } catch(e) {
+    toast('删除失败','error');
+  }
+  showLoading(false);
+}
+
+async function updateProgress() {
+  if(!CURRENT_ID || !CURRENT_DATA) return toast('请先保存基本信息','error');
+  if(CURRENT_DATA.stage >= 6) return toast('已是最后阶段','error');
+  const note = prompt("请输入进度说明/备注：");
+  if(note === null) return;
+  CURRENT_DATA.stage += 1;
+  const stageName = STAGES.find(s=>s.id === CURRENT_DATA.stage).n;
+  CURRENT_DATA.timeline.push({ t: todayStr(), txt: `进入[${stageName}]：${note}` });
+  const jsonStr = JSON.stringify(CURRENT_DATA);
+  showLoading(true);
+  await datasheet.records.update([{ recordId: CURRENT_ID, fields: { 'data_json': jsonStr } }]);
+  showLoading(false);
+  toast('进度已更新');
+  openDetail(CURRENT_ID); 
+  renderTable();
+}
+
+function getFormData() {
+  return {
+    caseNumber: val('i_no'),
+    entName: val('i_name'),
+    entType: val('i_type'),
+    handler: val('i_handler'),
+    registerDate: val('i_date'),
+    decisionLimit: val('i_limit')
+  };
+}
+
+function renderTable() {
+  const q = val('q_search').toLowerCase();
+  const type = val('q_type');
+  const status = val('q_status');
+  const tbody = document.getElementById('tableBody');
+  const list = ALL_CASES.filter(c => {
+    const txt = (c.caseNumber + c.entName + c.handler).toLowerCase();
+    const matchQ = txt.includes(q);
+    const matchType = !type || c.entType === type;
+    const dl = calcDeadLine(c);
+    let matchStatus = true;
+    if(status === 'overdue') matchStatus = dl.days <= 0 && c.stage < 6;
+    if(status === 'warning') matchStatus = dl.days > 0 && dl.days <= 7 && c.stage < 6;
+    if(status === 'normal') matchStatus = dl.days > 7 && c.stage < 6;
+    return matchQ && matchType && matchStatus;
+  });
+  if(!list.length) { tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:30px;color:#94a3b8">无匹配数据</td></tr>`; return; }
+  tbody.innerHTML = list.map(c => {
+    const dl = calcDeadLine(c);
+    const stageInfo = STAGES.find(s=>s.id === (c.stage||1));
+    let daysHtml = '';
+    if(c.stage >= 6) daysHtml = `<span class="tag blue">已结案</span>`;
+    else if(dl.days <= 0) daysHtml = `<span class="tag red">逾期 ${Math.abs(dl.days)} 天</span>`;
+    else if(dl.days <= 7) daysHtml = `<span class="tag orange">剩余 ${dl.days} 天</span>`;
+    else daysHtml = `<span class="tag blue">剩余 ${dl.days} 天</span>`;
+    const typeTag = c.entType === '事故案件' ? 'tag purple' : 'tag' + (c.entType==='矿山'?' orange':' blue');
+    return `<tr>
+      <td><div style="font-weight:bold">${c.entName}</div><div style="font-size:12px;color:#64748b">${c.caseNumber}</div></td>
+      <td><span class="${typeTag}" style="background:#f1f5f9;color:#475569">${c.entType}</span></td>
+      <td>${c.handler}</td>
+      <td><b style="color:var(--primary)">${stageInfo ? stageInfo.n : '-'}</b></td>
+      <td>${dl.date} ${dl.isAccident?'<br><span style="font-size:10px;color:red">事故60日限</span>':''}</td>
+      <td>${daysHtml}</td>
+      <td style="text-align:right"><button class="btn outline sm" onclick="openDetail('${c._id}')">详情</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function openDetail(id) {
+  CURRENT_ID = id;
+  const c = ALL_CASES.find(x => x._id === id);
+  CURRENT_DATA = c;
+  document.getElementById('i_no').value = c.caseNumber;
+  document.getElementById('i_name').value = c.entName;
+  document.getElementById('i_type').value = c.entType;
+  document.getElementById('i_handler').value = c.handler;
+  document.getElementById('i_date').value = c.registerDate;
+  document.getElementById('i_limit').value = c.decisionLimit;
+  handleTypeChange();
+  const tlBox = document.getElementById('timeline_box');
+  if(c.timeline && c.timeline.length) {
+    tlBox.innerHTML = c.timeline.map(t => `<div style="margin-bottom:8px;padding-bottom:8px;border-bottom:1px dashed #e2e8f0"><span style="color:#64748b;font-size:12px;margin-right:8px">${t.t}</span><span>${t.txt}</span></div>`).join('');
+  } else { tlBox.innerHTML = '<div style="color:#94a3b8;font-size:12px;text-align:center">暂无记录</div>'; }
+  document.getElementById('view_stage').textContent = STAGES.find(s=>s.id === (c.stage||1))?.n;
+  document.getElementById('btn_del').style.display = 'inline-flex';
+  document.getElementById('detailModal').classList.add('show');
+}
+
+function openNewCase() {
+  CURRENT_ID = null; CURRENT_DATA = null;
+  ['i_no','i_name','i_handler'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('i_date').value = todayStr();
+  document.getElementById('i_type').value = '矿山';
+  document.getElementById('i_limit').value = '90';
+  handleTypeChange();
+  document.getElementById('timeline_box').innerHTML = '新案件暂无记录';
+  document.getElementById('view_stage').textContent = '待保存';
+  document.getElementById('btn_del').style.display = 'none';
+  document.getElementById('detailModal').classList.add('show');
+}
+
+function handleTypeChange() {
+  const t = val('i_type');
+  const isAcc = t === '事故案件';
+  const lim = document.getElementById('i_limit');
+  const hint = document.getElementById('acc_hint');
+  if(isAcc) { lim.value = '60'; lim.disabled = true; hint.style.display = 'block'; }
+  else { lim.disabled = false; hint.style.display = 'none'; }
+}
+
+function calcDeadLine(c) {
+  if(!c.registerDate) return { days:0, date:'-', isAccident:false };
+  const isAcc = c.entType === '事故案件';
+  const limit = isAcc ? 60 : parseInt(c.decisionLimit || 90);
+  const start = new Date(c.registerDate);
+  const end = new Date(start);
+  end.setDate(start.getDate() + limit);
+  const now = new Date(); now.setHours(0,0,0,0);
+  const diff = Math.ceil((end - now) / (1000 * 60 * 60 * 24));
+  return { days: diff, date: end.toISOString().split('T')[0], isAccident: isAcc };
+}
+
+function calcStats() {
+  let total=ALL_CASES.length, over=0, acc=0, ok=0;
+  ALL_CASES.forEach(c => {
+    if(c.entType === '事故案件') acc++;
+    if(c.stage >= 6) return;
+    const d = calcDeadLine(c).days;
+    if(d <= 0) over++; else ok++;
+  });
+  document.getElementById('s_total').textContent = total;
+  document.getElementById('s_over').textContent = over;
+  document.getElementById('s_acc').textContent = acc;
+  document.getElementById('s_ok').textContent = ok;
+}
+
+function exportExcel() {
+  if(!ALL_CASES.length) return toast('无数据可导出','error');
+  const rows = ALL_CASES.map(c => {
+    const dl = calcDeadLine(c);
+    return { "案件编号": c.caseNumber, "企业名称": c.entName, "类型": c.entType, "立案日期": c.registerDate, "截止日期": dl.date, "剩余天数": c.stage>=6 ? '已结案' : dl.days, "当前阶段": STAGES.find(s=>s.id===c.stage)?.n }
+  });
+  const ws = XLSX.utils.json_to_sheet(rows);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "案件台账");
+  XLSX.writeFile(wb, `托里县应急_案件云台账_${todayStr()}.xlsx`);
+}
+
+function val(id) { return document.getElementById(id).value; }
+function todayStr() { return new Date().toISOString().split('T')[0]; }
+function closeModal() { document.getElementById('detailModal').classList.remove('show'); }
+function showLoading(show) { document.getElementById('loading').className = show ? '' : 'hidden'; }
+function toast(msg, type='success') {
+  const t = document.createElement('div'); t.className = 'toast';
+  if(type==='error') { t.style.borderLeftColor = '#dc2626'; t.innerHTML = '❌ ' + msg; }
+  else { t.innerHTML = '✅ ' + msg; }
+  document.getElementById('toastBox').appendChild(t);
+  setTimeout(()=>t.remove(), 3000);
+}
+
+// 启动
+refreshData();
+</script>
+</body>
+</html>
