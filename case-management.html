@@ -2,1646 +2,460 @@
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
   <title>托里县应急管理局｜案件管理</title>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <style>
-    :root{
-      --bg:#f3f6fb;
-      --card:#ffffff;
-      --text:#0b1220;
-      --muted:#516078;
-      --line:#e3eaf6;
-      --blue:#1d4ed8;
-      --red:#dc2626;
-      --amber:#f59e0b;
-      --green:#16a34a;
-      --shadow:0 18px 50px rgba(2,6,23,.12);
-      --radius:22px;
+    :root {
+      --primary: #2563eb; --primary-hover: #1d4ed8; --primary-light: #eff6ff;
+      --danger: #dc2626; --danger-bg: #fef2f2;
+      --warning: #f59e0b; --warning-bg: #fffbeb;
+      --success: #10b981; --success-bg: #ecfdf5;
+      --bg-body: #f8fafc; --surface: #ffffff;
+      --text-main: #0f172a; --text-muted: #64748b; --border: #e2e8f0;
+      --radius-md: 12px; --shadow-card: 0 4px 6px -1px rgb(0 0 0 / 0.1);
     }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family:"Microsoft YaHei",system-ui,-apple-system,Segoe UI,Arial;
-      color:var(--text);
-      background:
-        radial-gradient(1100px 520px at 20% 0%, rgba(29,78,216,.10), transparent 60%),
-        radial-gradient(900px 520px at 80% 10%, rgba(220,38,38,.09), transparent 55%),
-        linear-gradient(180deg, #f6f9ff 0%, #f3f6fb 45%, #eef3fb 100%);
-    }
-    a{color:inherit;text-decoration:none}
-    .wrap{max-width:1600px;margin:0 auto;padding:26px 22px 56px}
-
-    /* 顶部大标题区 */
-    .topbar{
-      position:relative;
-      border:1px solid var(--line);
-      border-radius:28px;
-      background:linear-gradient(135deg, rgba(29,78,216,.12), rgba(220,38,38,.10));
-      box-shadow:var(--shadow);
-      overflow:hidden;
-      padding:18px 18px;
-    }
-    .topbar::before{
-      content:"";
-      position:absolute;right:-110px;top:-110px;
-      width:420px;height:420px;border-radius:999px;
-      background:radial-gradient(circle at 30% 30%, rgba(220,38,38,.18), transparent 60%);
-      filter:blur(2px);
-    }
-    .topbar::after{
-      content:"";
-      position:absolute;left:-120px;top:-120px;
-      width:420px;height:420px;border-radius:999px;
-      background:radial-gradient(circle at 40% 40%, rgba(29,78,216,.18), transparent 62%);
-      filter:blur(2px);
-    }
-    .topInner{position:relative;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
-    .brand{display:flex;align-items:center;gap:16px}
-    .emblem{
-      width:60px;height:60px;border-radius:18px;
-      background:linear-gradient(135deg, var(--blue), var(--red));
-      box-shadow:0 24px 42px rgba(29,78,216,.22);
-      display:grid;place-items:center;color:#fff;flex:0 0 auto;
-    }
-    .brandText h1{margin:0;font-size:22px;font-weight:1000;letter-spacing:.3px}
-    .brandText .sub{margin-top:6px;font-size:13px;font-weight:900;color:rgba(11,18,32,.70)}
-    .stripe{
-      margin-top:14px;height:12px;border-radius:999px;
-      background:repeating-linear-gradient(135deg, rgba(220,38,38,.95) 0 14px, rgba(220,38,38,.95) 14px 28px, rgba(29,78,216,.95) 28px 42px, rgba(29,78,216,.95) 42px 56px);
-      opacity:.55;
-    }
-
-    /* 按钮 */
-    .topActions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-    .btn{
-      border:none;border-radius:18px;
-      padding:14px 16px;
-      cursor:pointer;font-weight:1000;
-      display:inline-flex;align-items:center;gap:10px;
-      background:var(--blue);color:#fff;font-size:14px;
-      transition:transform .08s ease, filter .08s ease;
-      box-shadow:0 18px 40px rgba(29,78,216,.16);
-    }
-    .btn:hover{transform:translateY(-1px);filter:brightness(1.03)}
-    .btn.dark{background:#0b1220;box-shadow:0 18px 40px rgba(2,6,23,.16)}
-    .btn.ghost{background:#fff;color:#0b1220;border:1px solid var(--line);box-shadow:none}
-    .btn.red{background:var(--red);box-shadow:0 18px 40px rgba(220,38,38,.16)}
-    .btn.green{background:#10b981}
-    .btn.purple{background:#8b5cf6}
-    .btn.orange{background:#f97316}
-
-    /* 主体布局更大气 */
-    .grid{display:grid;grid-template-columns:520px 1fr;gap:18px;margin-top:18px}
-    .card{
-      background:var(--card);
-      border:1px solid var(--line);
-      border-radius:28px;
-      padding:22px;
-      box-shadow:var(--shadow);
-    }
-    .sectionTitle{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:14px;gap:10px}
-    .sectionTitle h2{margin:0;font-size:16px;font-weight:1000}
-    .hint{color:var(--muted);font-size:12px;font-weight:800}
-    label{font-weight:1000;color:#0b1220;font-size:12px}
-    input,select,textarea{
-      padding:14px 14px;border-radius:18px;border:1px solid var(--line);
-      font-size:14px;outline:none;background:#fff;
-    }
-    textarea{resize:vertical;min-height:110px}
-    .field{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
-    .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
-
-    /* 过滤区更大 */
-    .filters{
-      display:grid;
-      grid-template-columns:1.4fr 1fr 1fr 1fr auto auto;
-      gap:12px;align-items:end
-    }
-
-    /* KPI */
-    .kpiRow{display:flex;gap:12px;flex-wrap:wrap;margin:14px 0}
-    .kpi{
-      flex:1 1 200px;
-      border:1px solid var(--line);
-      border-radius:22px;
-      padding:14px 16px;
-      background:#fff;
-    }
-    .kpi .n{font-size:22px;font-weight:1000}
-    .kpi .t{font-size:12px;color:var(--muted);font-weight:900;margin-top:6px}
-
-    /* 表格更易看 */
-    .tablewrap{border:1px solid var(--line);border-radius:22px;overflow:auto}
-    table{width:100%;border-collapse:collapse;min-width:1120px}
-    thead th{
-      position:sticky;top:0;background:#f8fbff;border-bottom:1px solid var(--line);
-      padding:14px 14px;font-size:12px;text-align:left;color:#0b1220;font-weight:1000;
-    }
-    tbody td{padding:14px;border-bottom:1px solid var(--line);font-size:14px;vertical-align:top}
-    tbody tr:hover{background:#f8fbff}
-    .statusText{font-weight:1000}
-    .muted{color:var(--muted);font-size:12px;font-weight:800;line-height:1.6;margin-top:4px}
-
-    .pill{
-      display:inline-flex;align-items:center;gap:8px;
-      padding:10px 14px;border-radius:999px;
-      border:1px solid rgba(29,78,216,.22);
-      background:rgba(29,78,216,.08);
-      color:var(--blue);font-weight:1000;font-size:12px;
-      white-space:nowrap;
-    }
-    .pill.stage-warn{background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.30);color:#92400e}
-    .pill.stage-over{background:rgba(220,38,38,.12);border-color:rgba(220,38,38,.30);color:var(--red)}
-    .pill.stage-invest{background:rgba(29,78,216,.12);border-color:rgba(29,78,216,.30);color:var(--blue)}
-
+    * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
+    body { margin: 0; font-family: "Microsoft YaHei", sans-serif; background: var(--bg-body); color: var(--text-main); padding-bottom: 60px; }
+    
+    .app-container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+    
+    /* Header */
+    .header { display: flex; justify-content: space-between; align-items: center; background: var(--surface); padding: 16px 24px; border-radius: var(--radius-md); box-shadow: var(--shadow-card); margin-bottom: 20px; border: 1px solid var(--border); }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .brand-icon { width: 40px; height: 40px; border-radius: 8px; background: linear-gradient(135deg, var(--primary), var(--danger)); color: #fff; display: grid; place-items: center; font-weight: bold; }
+    .brand-text h1 { margin: 0; font-size: 18px; font-weight: 700; }
+    
+    /* Stats */
+    .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .stat-card { background: var(--surface); padding: 20px; border-radius: var(--radius-md); border: 1px solid var(--border); display: flex; flex-direction: column; }
+    .stat-label { font-size: 13px; color: var(--text-muted); margin-bottom: 4px; }
+    .stat-value { font-size: 28px; font-weight: 800; }
+    .stat-card.alert .stat-value { color: var(--danger); }
+    
+    /* Toolbar & Table */
+    .toolbar { background: var(--surface); padding: 16px; border-radius: var(--radius-md) var(--radius-md) 0 0; border: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap; }
+    .search-box { flex: 1; min-width: 200px; }
+    .form-input, .form-select { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; }
+    
+    .table-container { background: var(--surface); border: 1px solid var(--border); border-top: none; border-radius: 0 0 var(--radius-md) var(--radius-md); overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; min-width: 1000px; }
+    th { background: #f1f5f9; text-align: left; padding: 12px 16px; font-size: 12px; color: var(--text-muted); position: sticky; top: 0; }
+    td { padding: 14px 16px; border-bottom: 1px solid var(--border); font-size: 14px; vertical-align: middle; }
+    tr:hover td { background: var(--bg-body); }
+    
+    .badge { display: inline-flex; padding: 4px 10px; border-radius: 99px; font-size: 12px; font-weight: 700; }
+    .badge.blue { background: var(--primary-light); color: var(--primary); }
+    .badge.red { background: var(--danger-bg); color: var(--danger); }
+    .badge.orange { background: var(--warning-bg); color: var(--warning); }
+    .badge.purple { background: #f3e8ff; color: #7e22ce; } /* 事故专用 */
+    
+    .btn { padding: 10px 16px; border-radius: 6px; border: none; cursor: pointer; font-size: 14px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; transition: 0.2s; }
+    .btn.primary { background: var(--primary); color: #fff; }
+    .btn.outline { background: #fff; border: 1px solid var(--border); color: var(--text-main); }
+    .btn:hover { opacity: 0.9; transform: translateY(-1px); }
+    
     /* Modal */
-    .modal{display:none;position:fixed;inset:0;background:rgba(2,6,23,.58);z-index:2000;padding:20px;overflow:auto}
-    .modalContent{
-      max-width:1100px;margin:0 auto;background:#fff;border-radius:28px;
-      border:1px solid var(--line);box-shadow:var(--shadow);padding:18px;
-    }
-    .modalHead{display:flex;justify-content:space-between;align-items:center;gap:12px}
-    .modalHead h3{margin:0;font-size:18px;font-weight:1000}
-    .xbtn{cursor:pointer;font-size:28px;line-height:1;color:#64748b}
-    .xbtn:hover{color:var(--red)}
-    .tabs{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
-    .tabBtn{
-      padding:12px 14px;border-radius:18px;border:1px solid var(--line);
-      background:#fff;font-weight:1000;cursor:pointer;font-size:13px;color:#0b1220;
-    }
-    .tabBtn.active{background:rgba(29,78,216,.10);border-color:rgba(29,78,216,.28);color:var(--blue)}
-    .tab{display:none}
-    .tab.active{display:block}
+    .modal-overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.5); backdrop-filter: blur(4px); z-index: 100; display: none; place-items: center; padding: 20px; }
+    .modal-overlay.open { display: grid; }
+    .modal-content { background: var(--surface); width: 100%; max-width: 900px; max-height: 90vh; overflow-y: auto; border-radius: var(--radius-md); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
+    .modal-header { padding: 16px 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: var(--surface); z-index: 10; }
+    .modal-body { padding: 24px; }
+    
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+    .form-group label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 6px; }
+    .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
+    .tab-btn { padding: 10px 16px; border: none; background: none; cursor: pointer; border-bottom: 2px solid transparent; font-weight: 600; color: var(--text-muted); }
+    .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+    .tab-pane { display: none; } .tab-pane.active { display: block; }
 
-    .timelineItem{
-      border-left:4px solid rgba(29,78,216,.60);
-      padding:12px 12px 12px 14px;margin-bottom:12px;background:#f8fbff;
-      border-radius:18px;
-    }
-    .timelineItem .tt{font-weight:1000;font-size:14px}
-    .timelineItem .dd{font-size:12px;color:var(--muted);font-weight:800;margin-top:6px;line-height:1.6}
-
-    .checklist{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    .chk{
-      display:flex;gap:10px;align-items:flex-start;
-      border:1px solid var(--line);border-radius:18px;padding:12px;background:#fff;
-    }
-    .chk input{margin-top:4px}
-    .chk label{font-weight:1000;font-size:12px;line-height:1.4}
-
-    .fileBox{border:1px dashed rgba(29,78,216,.35);border-radius:18px;padding:14px;background:rgba(29,78,216,.04)}
-    .fileRow{display:grid;grid-template-columns:1fr 240px;gap:12px;align-items:end;margin-top:10px}
-    .fileListItem{border:1px solid var(--line);border-radius:18px;padding:12px;background:#fff;margin-top:12px}
-
-    .confirmBox{
-      border:1px solid rgba(245,158,11,.30);
-      background:rgba(245,158,11,.08);
-      border-radius:18px;padding:14px;margin-top:12px;
-    }
-    .confirmBox .line{display:flex;gap:10px;align-items:flex-start;margin-top:10px}
-    .confirmBox input{margin-top:4px}
-
-    @media (max-width: 1100px){
-      .grid{grid-template-columns:1fr}
-      .filters{grid-template-columns:1fr 1fr}
-      table{min-width:1120px}
-    }
+    /* Toast */
+    #toast-container { position: fixed; top: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
+    .toast { background: var(--surface); padding: 12px 16px; border-radius: 6px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); border-left: 4px solid var(--primary); display: flex; gap: 10px; font-size: 14px; animation: slideIn 0.3s; }
+    .toast.error { border-left-color: var(--danger); }
+    @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <section class="topbar" aria-label="案件管理顶部">
-      <div class="topInner">
-        <div class="brand">
-          <div class="emblem" aria-hidden="true">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-              <path d="M12 2l7 4v6c0 5-3 9-7 10-4-1-7-5-7-10V6l7-4z" stroke="white" stroke-width="2" />
-              <path d="M8 12l2.2 2.2L16 8.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </div>
-          <div class="brandText">
-            <h1>托里县应急管理局｜案件管理</h1>
-            <div class="sub">行政处罚案件进度与期限</div>
-          </div>
-        </div>
-
-        <div class="topActions">
-          <a class="btn ghost" href="./index.html">返回首页</a>
-          <button class="btn dark" id="btnSettings">系统设置</button>
-          <button class="btn orange" id="btnBackupJson">备份JSON</button>
-          <button class="btn green" id="btnRestoreJson">恢复JSON</button>
-          <button class="btn purple" id="btnExportXlsx">导出Excel</button>
-          <button class="btn green" id="btnImportXlsx">导入Excel</button>
-        </div>
+  <div id="toast-container"></div>
+  <div class="app-container">
+    <header class="header">
+      <div class="brand">
+        <div class="brand-icon">安</div>
+        <div class="brand-text"><h1>案件管理系统</h1><span style="font-size:12px;color:#64748b">v2.1 事故案件增强版</span></div>
       </div>
-      <div class="stripe" aria-hidden="true"></div>
-    </section>
+      <div>
+        <a href="./index.html" class="btn outline">🏠 返回首页</a>
+        <button class="btn outline" id="btnExport">📥 导出Excel</button>
+        <button class="btn primary" id="btnNewCase">＋ 新增案件</button>
+      </div>
+    </header>
 
-    <div class="grid">
-      <!-- 新增案件 -->
-      <section class="card" aria-label="新增案件">
-        <div class="sectionTitle">
-          <h2>新增案件</h2>
-          <div class="hint">必填项请完整填写</div>
-        </div>
+    <div class="dashboard-grid">
+      <div class="stat-card"><span class="stat-label">案件总数</span><span class="stat-value" id="kpi-total">-</span></div>
+      <div class="stat-card alert"><span class="stat-label">已逾期</span><span class="stat-value" id="kpi-overdue">-</span></div>
+      <div class="stat-card"><span class="stat-label">事故案件</span><span class="stat-value" id="kpi-accident" style="color:#7e22ce">-</span></div>
+      <div class="stat-card"><span class="stat-label">正常进度</span><span class="stat-value" id="kpi-normal" style="color:var(--success)">-</span></div>
+    </div>
 
-        <div class="row2">
-          <div class="field">
-            <label>案件编号 *</label>
-            <input id="caseNumber" placeholder="例：托应急罚〔2025〕001号" />
-          </div>
-          <div class="field">
-            <label>企业名称 *</label>
-            <input id="enterpriseName" placeholder="涉事企业全称" />
-          </div>
-        </div>
+    <div class="toolbar">
+      <input id="searchInput" class="form-input search-box" placeholder="搜索：编号、企业、办案人..." />
+      <select id="filterType" class="form-select" style="width:auto">
+        <option value="">所有类型</option>
+        <option value="矿山">矿山</option>
+        <option value="危化">危化</option>
+        <option value="工贸">工贸</option>
+        <option value="烟花爆竹">烟花爆竹</option>
+        <option value="事故案件">事故案件(60日)</option>
+      </select>
+    </div>
 
-        <div class="row2">
-          <div class="field">
-            <label>企业类型 *</label>
-            <select id="enterpriseType">
-              <option value="">请选择</option>
-              <option value="矿山">矿山</option>
-              <option value="危化">危化</option>
-              <option value="工贸">工贸</option>
-              <option value="烟花爆竹">烟花爆竹</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>案件名称 *</label>
-            <input id="caseName" placeholder="例：XX企业违规动火案" />
-          </div>
-        </div>
-
-        <div class="row2">
-          <div class="field">
-            <label>立案日期 *</label>
-            <input id="registerDate" type="date" />
-          </div>
-          <div class="field">
-            <label>办案人 *</label>
-            <input id="handlerName" placeholder="多人用 / 分隔" />
-          </div>
-        </div>
-
-        <div class="row2">
-          <div class="field">
-            <label>处罚决定期限（硬上限）*</label>
-            <select id="decisionLimit">
-              <option value="90" selected>90日</option>
-              <option value="180">180日</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>调查取证期限 *</label>
-            <select id="investigationLimit">
-              <option value="30" selected>30日</option>
-              <option value="60">60日</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="field">
-          <label>备注（选填）</label>
-          <textarea id="caseRemark" placeholder="可记录案情要点、联系人、关键风险等"></textarea>
-        </div>
-
-        <button class="btn" id="btnAddCase">添加案件</button>
-      </section>
-
-      <!-- 列表 -->
-      <section class="card" aria-label="案件列表">
-        <div class="sectionTitle">
-          <h2>案件进度列表</h2>
-          <div class="hint" id="nowText"></div>
-        </div>
-
-        <div class="filters">
-          <div class="field" style="margin:0">
-            <label>搜索</label>
-            <input id="q" placeholder="编号/企业/名称/办案人" />
-          </div>
-          <div class="field" style="margin:0">
-            <label>企业类型</label>
-            <select id="fType">
-              <option value="">全部</option>
-              <option value="矿山">矿山</option>
-              <option value="危化">危化</option>
-              <option value="工贸">工贸</option>
-              <option value="烟花爆竹">烟花爆竹</option>
-            </select>
-          </div>
-          <div class="field" style="margin:0">
-            <label>当前进度</label>
-            <select id="fStage"></select>
-          </div>
-          <div class="field" style="margin:0">
-            <label>状态</label>
-            <select id="fRisk">
-              <option value="">全部</option>
-              <option value="normal">正常</option>
-              <option value="warning">临期（≤3天）</option>
-              <option value="overdue">逾期</option>
-            </select>
-          </div>
-          <button class="btn ghost" id="btnFilter">筛选</button>
-          <button class="btn ghost" id="btnReset">重置</button>
-        </div>
-
-        <div class="kpiRow" id="kpiRow"></div>
-
-        <div class="tablewrap">
-          <table>
-            <thead>
-              <tr>
-                <th>案件编号</th>
-                <th>企业</th>
-                <th>类型</th>
-                <th>办案人</th>
-                <th>当前进度</th>
-                <th>截止类型</th>
-                <th>截止日期</th>
-                <th>剩余</th>
-                <th>操作</th>
-              </tr>
-            </thead>
-            <tbody id="tbody"></tbody>
-          </table>
-        </div>
-      </section>
+    <div class="table-container">
+      <table>
+        <thead><tr><th>案件信息</th><th>类型</th><th>办案人</th><th>当前进度</th><th>法定截止</th><th>剩余天数</th><th style="text-align:right">操作</th></tr></thead>
+        <tbody id="tableBody"></tbody>
+      </table>
     </div>
   </div>
 
-  <!-- 详情弹窗 -->
-  <div class="modal" id="detailModal">
-    <div class="modalContent">
-      <div class="modalHead">
-        <h3 id="detailTitle">案件详情</h3>
-        <div class="xbtn" id="closeDetail">×</div>
+  <div class="modal-overlay" id="detailModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 style="margin:0">案件详情</h3>
+        <button class="btn outline" onclick="closeModal()">×</button>
       </div>
-
-      <div class="tabs">
-        <button class="tabBtn active" data-tab="tabBase">基本信息</button>
-        <button class="tabBtn" data-tab="tabDates">关键日期</button>
-        <button class="tabBtn" data-tab="tabTimeline">进度记录</button>
-        <button class="tabBtn" data-tab="tabRemedy">整改跟踪</button>
-        <button class="tabBtn" data-tab="tabDocs">文书清单</button>
-        <button class="tabBtn" data-tab="tabFiles">文件</button>
-      </div>
-
-      <div class="tab active" id="tabBase">
-        <div class="row2">
-          <div class="field"><label>案件编号</label><div id="d_caseNumber" class="statusText">-</div></div>
-          <div class="field"><label>企业名称</label><div id="d_enterpriseName" class="statusText">-</div></div>
+      <div class="modal-body">
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="t-base">基本信息</button>
+          <button class="tab-btn" data-tab="t-progress">进度记录</button>
+          <button class="tab-btn" data-tab="t-files">附件(DB)</button>
         </div>
-        <div class="row3">
-          <div class="field"><label>企业类型</label><div id="d_enterpriseType" class="statusText">-</div></div>
-          <div class="field"><label>办案人</label><div id="d_handlerName" class="statusText">-</div></div>
-          <div class="field"><label>立案日期</label><div id="d_registerDate" class="statusText">-</div></div>
-        </div>
-        <div class="row3">
-          <div class="field"><label>处罚决定期限</label><div id="d_decisionLimit" class="statusText">-</div></div>
-          <div class="field"><label>调查取证期限</label><div id="d_investigationLimit" class="statusText">-</div></div>
-          <div class="field"><label>当前进度</label><div id="d_stage" class="statusText">-</div></div>
-        </div>
-        <div class="field">
-          <label>备注</label>
-          <textarea id="d_remark"></textarea>
-          <button class="btn ghost" id="btnSaveRemark" style="width:max-content">保存备注</button>
-        </div>
-      </div>
-
-      <div class="tab" id="tabDates">
-        <div class="row2">
-          <div class="card" style="box-shadow:none;border-radius:22px">
-            <div class="sectionTitle"><h2>硬上限与倒推</h2></div>
-            <div class="row2">
-              <div class="field"><label>决定最晚日</label><div id="d_decisionDeadline" class="statusText">-</div></div>
-              <div class="field"><label>告知最晚日</label><div id="d_noticeLatest" class="statusText">-</div></div>
-            </div>
-            <div class="row2">
-              <div class="field"><label>调查到期日</label><div id="d_investigationDeadline" class="statusText">-</div></div>
-              <div class="field"><label>当前节点截止</label><div id="d_nodeDeadline" class="statusText">-</div></div>
-            </div>
-          </div>
-
-          <div class="card" style="box-shadow:none;border-radius:22px">
-            <div class="sectionTitle"><h2>决定后派生</h2></div>
-            <div class="row2">
-              <div class="field"><label>送达最晚日</label><div id="d_serveDeadline" class="statusText">-</div></div>
-              <div class="field"><label>缴款最晚日</label><div id="d_payDeadline" class="statusText">-</div></div>
-            </div>
-            <div class="row2">
-              <div class="field"><label>立卷最晚日（20个工作日）</label><div id="d_filingDeadline" class="statusText">-</div></div>
-              <div class="field"><label>归档最晚日</label><div id="d_archiveDeadline" class="statusText">-</div></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="card" style="box-shadow:none;border-radius:22px;margin-top:12px">
-          <div class="sectionTitle"><h2>关键日期（登记）</h2></div>
-          <div class="row3">
-            <div class="field"><label>调查完成日</label><input type="date" id="k_investigationDone"></div>
-            <div class="field"><label>集体讨论完成日</label><input type="date" id="k_discussionDone"></div>
-            <div class="field"><label>告知送达日</label><input type="date" id="k_noticeServed"></div>
-          </div>
-          <div class="row3">
-            <div class="field"><label>决定签发日</label><input type="date" id="k_decisionMade"></div>
-            <div class="field"><label>决定书送达日</label><input type="date" id="k_decisionServed"></div>
-            <div class="field"><label>缴款完成日</label><input type="date" id="k_finePaid"></div>
-          </div>
-          <div class="row3">
-            <div class="field"><label>结案审批签署日</label><input type="date" id="k_closed"></div>
-            <div class="field"><label>立卷完成日</label><input type="date" id="k_filed"></div>
-            <div class="field"><label>归档完成日</label><input type="date" id="k_archived"></div>
-          </div>
-          <button class="btn ghost" id="btnSaveKeyDates" style="width:max-content">保存</button>
-        </div>
-      </div>
-
-      <div class="tab" id="tabTimeline">
-        <div id="timeline"></div>
-      </div>
-
-      <div class="tab" id="tabRemedy">
-        <div class="card" style="box-shadow:none;border-radius:22px">
-          <div class="sectionTitle"><h2>整改跟踪</h2></div>
-          <div class="row3">
-            <div class="field"><label>整改指令下达日</label><input type="date" id="r_issue"></div>
-            <div class="field"><label>整改期限</label><input type="date" id="r_deadline"></div>
-            <div class="field"><label>复查日</label><input type="date" id="r_review"></div>
-          </div>
-          <div class="row2">
-            <div class="field">
-              <label>整改结果</label>
-              <select id="r_result">
-                <option value="">请选择</option>
-                <option value="已完成">已完成</option>
-                <option value="未完成">未完成</option>
-                <option value="部分完成">部分完成</option>
+        
+        <div id="t-base" class="tab-pane active">
+          <div class="form-grid">
+            <div class="form-group"><label>案件编号</label><input class="form-input" id="inp_caseNumber"></div>
+            <div class="form-group"><label>企业名称</label><input class="form-input" id="inp_entName"></div>
+            <div class="form-group">
+              <label>企业类型</label>
+              <select class="form-select" id="inp_entType">
+                <option value="矿山">矿山</option>
+                <option value="危化">危化</option>
+                <option value="工贸">工贸</option>
+                <option value="烟花爆竹">烟花爆竹</option>
+                <option value="事故案件">事故案件 (60日限)</option>
               </select>
             </div>
-            <div class="field"><label>备注</label><input id="r_note" placeholder="选填"></div>
-          </div>
-          <button class="btn ghost" id="btnSaveRemedy" style="width:max-content">保存</button>
-          <div class="hint" id="remedyHint" style="margin-top:10px"></div>
-        </div>
-      </div>
-
-      <div class="tab" id="tabDocs">
-        <div class="card" style="box-shadow:none;border-radius:22px">
-          <div class="sectionTitle"><h2>文书清单</h2></div>
-          <div class="checklist" id="docChecklist"></div>
-          <button class="btn ghost" id="btnSaveDocs" style="width:max-content;margin-top:10px">保存</button>
-        </div>
-      </div>
-
-      <div class="tab" id="tabFiles">
-        <div class="card" style="box-shadow:none;border-radius:22px">
-          <div class="sectionTitle"><h2>文件（选填）</h2></div>
-          <div class="fileBox">
-            <div class="row2">
-              <div class="field" style="margin:0">
-                <label>文件分类</label>
-                <select id="f_cat">
-                  <option value="现场检查记录">现场检查记录</option>
-                  <option value="询问笔录">询问笔录</option>
-                  <option value="行政处罚决定书">行政处罚决定书</option>
-                  <option value="责令限期整改">责令限期整改</option>
-                  <option value="送达回执">送达回执</option>
-                  <option value="其他">其他</option>
-                </select>
-              </div>
-              <div class="field" style="margin:0">
-                <label>备注（选填）</label>
-                <input id="f_note" placeholder="选填" />
-              </div>
-            </div>
-
-            <div class="fileRow">
-              <div class="field" style="margin:0">
-                <label>选择文件</label>
-                <input id="f_file" type="file" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" />
-              </div>
-              <button class="btn orange" id="btnUpload">上传</button>
+            <div class="form-group"><label>立案日期</label><input type="date" class="form-input" id="inp_regDate"></div>
+            <div class="form-group"><label>办案人员</label><input class="form-input" id="inp_handler"></div>
+            <div class="form-group">
+              <label>期限设置</label>
+              <select class="form-select" id="inp_limit">
+                <option value="90">90日 (一般程序)</option>
+                <option value="180">180日 (延长)</option>
+              </select>
+              <div id="accidentHint" style="font-size:12px;color:#dc2626;margin-top:4px;display:none">⚠️ 事故案件强制锁定60日</div>
             </div>
           </div>
-
-          <div id="fileList"></div>
-        </div>
-      </div>
-
-      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;justify-content:flex-end">
-        <button class="btn red" id="btnDeleteCase">删除案件</button>
-        <button class="btn dark" id="btnOpenUpdate">更新进度</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- 更新进度弹窗 -->
-  <div class="modal" id="updateModal">
-    <div class="modalContent" style="max-width:900px">
-      <div class="modalHead">
-        <h3>更新进度</h3>
-        <div class="xbtn" id="closeUpdate">×</div>
-      </div>
-
-      <div class="card" style="box-shadow:none;border-radius:22px">
-        <div class="row2">
-          <div class="field"><label>当前节点</label><div id="u_curr" class="statusText">-</div></div>
-          <div class="field"><label>下一节点</label><div id="u_next" class="statusText">-</div></div>
-        </div>
-        <div class="row2">
-          <div class="field"><label>本节点截止</label><div id="u_deadline" class="statusText">-</div></div>
-          <div class="field"><label>决定最晚日</label><div id="u_decisionDeadline" class="statusText">-</div></div>
-        </div>
-
-        <div class="row2">
-          <div class="field">
-            <label>完成日期</label>
-            <input type="date" id="u_doneDate" />
-          </div>
-          <div class="field">
-            <label>备注（选填）</label>
-            <input id="u_note" placeholder="选填" />
+          <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:20px">
+            <button class="btn primary" style="background:var(--danger)" id="btnDelete">删除</button>
+            <button class="btn primary" id="btnSaveBase">保存</button>
           </div>
         </div>
 
-        <div class="confirmBox">
-          <div class="statusText">确认</div>
-          <div class="line">
-            <input type="checkbox" id="u_chk1">
-            <label for="u_chk1" style="font-weight:1000">当前节点工作已完成，进入下一节点。</label>
+        <div id="t-progress" class="tab-pane">
+          <div style="background:#f1f5f9;padding:15px;border-radius:8px;margin-bottom:15px;display:flex;justify-content:space-between">
+            <div>当前：<b id="view_stage">-</b></div>
+            <div>下一阶段：<b id="view_next_stage" style="color:var(--primary)">-</b></div>
           </div>
-          <div class="line" id="u_extraLine" style="display:none">
-            <input type="checkbox" id="u_chk2">
-            <label for="u_chk2" style="font-weight:1000;color:#92400e">存在异常提示，仍继续登记。</label>
+          <div style="display:flex;gap:10px;margin-bottom:20px">
+            <input type="date" class="form-input" id="inp_progDate" style="width:auto">
+            <input class="form-input" id="inp_progNote" placeholder="进度说明">
+            <button class="btn primary" id="btnUpdateProg">更新进度</button>
           </div>
-          <div class="hint" id="u_warnText" style="margin-top:10px"></div>
+          <div id="timelineList" style="border-left:2px solid #e2e8f0;padding-left:15px;margin-left:5px"></div>
         </div>
 
-        <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:14px">
-          <button class="btn ghost" id="u_cancel">取消</button>
-          <button class="btn" id="u_confirm">确认更新</button>
+        <div id="t-files" class="tab-pane">
+          <div style="background:#ecfdf5;color:#065f46;padding:10px;border-radius:6px;font-size:13px;margin-bottom:15px">
+             ✅ 已启用 IndexedDB 本地数据库技术，支持存储大文件且不卡顿。
+          </div>
+          <div style="display:flex;gap:10px;margin-bottom:15px">
+            <input type="file" id="inp_file" class="form-input">
+            <button class="btn primary" id="btnUploadFile">上传</button>
+          </div>
+          <div id="fileListArea"></div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- 系统设置弹窗 -->
-  <div class="modal" id="settingsModal">
-    <div class="modalContent" style="max-width:900px">
-      <div class="modalHead">
-        <h3>系统设置</h3>
-        <div class="xbtn" id="closeSettings">×</div>
-      </div>
-      <div class="card" style="box-shadow:none;border-radius:22px">
-        <div class="sectionTitle"><h2>节假日（用于20个工作日计算）</h2></div>
-        <div class="field" style="margin-top:10px">
-          <label>节假日列表（每行一个：YYYY-MM-DD）</label>
-          <textarea id="holidayText"></textarea>
-        </div>
-        <div style="display:flex;gap:10px;justify-content:flex-end">
-          <button class="btn ghost" id="btnResetHoliday">恢复默认</button>
-          <button class="btn" id="btnSaveHoliday">保存</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script>
-/* ========== 数据与规则 ========== */
-
-const STORAGE_KEY = "tl_emg_cases_v2";
-const HOLIDAY_KEY = "tl_emg_holidays_v1";
+<script>
+// --- DB & Logic ---
+const DB_CFG = { name:'EmgCaseDB_v2', ver:1, store:'cases', fileStore:'files' };
+class DB {
+  async open(){
+    return new Promise((res,rej)=>{
+      const r = indexedDB.open(DB_CFG.name, DB_CFG.ver);
+      r.onupgradeneeded = e => {
+        const d = e.target.result;
+        if(!d.objectStoreNames.contains(DB_CFG.store)) d.createObjectStore(DB_CFG.store, {keyPath:'id'});
+        if(!d.objectStoreNames.contains(DB_CFG.fileStore)) d.createObjectStore(DB_CFG.fileStore, {keyPath:'id'}).createIndex('cid','cid');
+      };
+      r.onsuccess = e => res(e.target.result);
+      r.onerror = e => rej(e);
+    });
+  }
+  async tx(store, mode, cb){
+    const db = await this.open();
+    return new Promise((res,rej)=>{
+      const t = db.transaction(store, mode);
+      const req = cb(t.objectStore(store));
+      req.onsuccess = () => res(req.result);
+      req.onerror = () => rej(req.error);
+    });
+  }
+  async getAll(){ return this.tx(DB_CFG.store, 'readonly', s=>s.getAll()); }
+  async put(data){ return this.tx(DB_CFG.store, 'readwrite', s=>s.put(data)); }
+  async del(id){
+    const db = await this.open();
+    const tx = db.transaction([DB_CFG.store, DB_CFG.fileStore], 'readwrite');
+    tx.objectStore(DB_CFG.store).delete(id);
+    const idx = tx.objectStore(DB_CFG.fileStore).index('cid');
+    idx.getAllKeys(id).onsuccess = e => {
+      e.target.result.forEach(k => tx.objectStore(DB_CFG.fileStore).delete(k));
+    };
+    return new Promise(r => tx.oncomplete = r);
+  }
+  async addFile(f){ return this.tx(DB_CFG.fileStore, 'readwrite', s=>s.put(f)); }
+  async getFiles(cid){
+    const db = await this.open();
+    return new Promise(res => {
+      const idx = db.transaction(DB_CFG.fileStore,'readonly').objectStore(DB_CFG.fileStore).index('cid');
+      idx.getAll(cid).onsuccess = e => res(e.target.result);
+    });
+  }
+  async delFile(fid){ return this.tx(DB_CFG.fileStore, 'readwrite', s=>s.delete(fid)); }
+}
+const db = new DB();
 
 const STAGES = [
-  { id: 1, name: "立案" },
-  { id: 2, name: "调查取证" },
-  { id: 3, name: "集体讨论完成" },
-  { id: 4, name: "处罚事先告知" },
-  { id: 5, name: "作出处罚决定" },
-  { id: 6, name: "送达处罚决定书" },
-  { id: 7, name: "罚款缴纳" },
-  { id: 8, name: "案件结案" },
-  { id: 9, name: "案卷立卷" },
-  { id: 10, name: "案卷归档" }
+  {id:1,name:"立案/事故发生"}, {id:2,name:"调查取证"}, {id:3,name:"事先告知"}, 
+  {id:4,name:"决定/报告提交"}, {id:5,name:"送达/结案"}, {id:6,name:"归档完成"}
 ];
 
-const DOCS = [
-  "案卷封面（正卷）",
-  "卷内目录",
-  "行政处罚决定书",
-  "立案审批表",
-  "案件处理呈批表",
-  "行政处罚集体讨论记录",
-  "行政处罚事先告知书",
-  "送达回执（含决定书送达）",
-  "罚款收据/缴纳凭证",
-  "现场检查记录",
-  "询问通知书/询问笔录",
-  "责令限期整改/整改复查意见",
-  "证据材料（按形成时间顺序）",
-  "其他相关文书",
-  "结案审批表"
-];
+// UI Logic
+let cases=[], curId=null;
 
-let currentId = null;
-let CASES = loadCases();
-
-function defaultHolidays(){
-  return [
-    "2025-01-01",
-    "2025-02-01","2025-02-02","2025-02-03","2025-02-04","2025-02-05","2025-02-06","2025-02-07",
-    "2025-04-04","2025-04-05","2025-04-06",
-    "2025-05-01","2025-05-02","2025-05-03","2025-05-04","2025-05-05",
-    "2025-06-01","2025-06-02",
-    "2025-09-15","2025-09-16","2025-09-17",
-    "2025-10-01","2025-10-02","2025-10-03","2025-10-04","2025-10-05","2025-10-06","2025-10-07",
-    "2026-01-01","2026-01-02","2026-01-03",
-    "2026-02-17","2026-02-18","2026-02-19","2026-02-20","2026-02-21","2026-02-22","2026-02-23",
-    "2026-03-21",
-    "2026-04-22","2026-04-23","2026-04-24",
-    "2026-05-01","2026-05-02","2026-05-03","2026-05-04","2026-05-05",
-    "2026-06-09","2026-06-10",
-    "2026-07-31","2026-08-01","2026-08-02",
-    "2026-09-17","2026-09-18",
-    "2026-10-01","2026-10-02","2026-10-03","2026-10-04","2026-10-05","2026-10-06","2026-10-07"
-  ];
-}
-function loadHolidays(){
-  const raw = localStorage.getItem(HOLIDAY_KEY);
-  if(!raw) return defaultHolidays();
-  const arr = raw.split("\n").map(s=>s.trim()).filter(Boolean);
-  return arr.length ? arr : defaultHolidays();
-}
-let HOLIDAYS = loadHolidays();
-
-function pad(n){ return String(n).padStart(2,"0"); }
-function fmt(d){
-  const dt = new Date(d);
-  return `${dt.getFullYear()}-${pad(dt.getMonth()+1)}-${pad(dt.getDate())}`;
-}
-function parseDate(s){
-  if(!s) return null;
-  const d = new Date(s + "T00:00:00");
-  return isNaN(d) ? null : d;
-}
-function addDays(dateStr, days){
-  const d = parseDate(dateStr);
-  if(!d) return null;
-  d.setDate(d.getDate() + days);
-  return fmt(d);
-}
-function diffDays(toDateStr){
-  const end = parseDate(toDateStr);
-  if(!end) return null;
-  const today = new Date();
-  const t0 = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-  const e0 = new Date(end.getFullYear(), end.getMonth(), end.getDate());
-  return Math.ceil((e0 - t0)/(1000*60*60*24));
-}
-function isWeekend(d){ const w=d.getDay(); return w===0||w===6; }
-function addWorkDaysFromNextDay(dateStr, workDays){
-  const base = parseDate(dateStr);
-  if(!base) return null;
-  let d = new Date(base.getFullYear(), base.getMonth(), base.getDate());
-  let count = 0;
-  while(count < workDays){
-    d.setDate(d.getDate()+1);
-    const ds = fmt(d);
-    if(!isWeekend(d) && !HOLIDAYS.includes(ds)){
-      count++;
-    }
-  }
-  return fmt(d);
+function toast(msg, type=''){
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.innerHTML = `<span>${type==='error'?'⚠️':'✅'}</span> ${msg}`;
+  document.getElementById('toast-container').appendChild(t);
+  setTimeout(()=>t.remove(), 3000);
 }
 
-function computeDeadlines(c){
-  const decisionDeadline = addDays(c.registerDate, Number(c.decisionLimit||90));
-  const noticeLatest = decisionDeadline ? addDays(decisionDeadline, -3) : null;
-  const investigationDeadline = addDays(c.registerDate, Number(c.investigationLimit||30));
-
-  const kd = c.keyDates || {};
-  const serveDeadline = kd.decisionMade ? addDays(kd.decisionMade, 7) : null;
-  const payDeadline = kd.decisionServed ? addDays(kd.decisionServed, 15) : null;
-  const filingDeadline = kd.decisionMade ? addWorkDaysFromNextDay(kd.decisionMade, 20) : null;
-  const archiveDeadline = kd.closed ? addDays(kd.closed, 30) : null;
-
-  return { decisionDeadline, noticeLatest, investigationDeadline, serveDeadline, payDeadline, filingDeadline, archiveDeadline };
+function getDead(c){
+  if(!c.registerDate) return {days:null, date:'-'};
+  const start = new Date(c.registerDate);
+  // 核心逻辑：事故案件强制60天，其他按设定
+  const limit = (c.entType === '事故案件') ? 60 : parseInt(c.decisionLimit||90);
+  start.setDate(start.getDate() + limit);
+  const now = new Date(); now.setHours(0,0,0,0);
+  const days = Math.ceil((start - now)/(86400000));
+  return { days, date: start.toISOString().split('T')[0], isAccident: c.entType === '事故案件' };
 }
 
-function nodeDeadlineInfo(c){
-  const dl = computeDeadlines(c);
-  const stage = c.progress || 1;
-
-  const min2 = (a,b)=>{
-    if(!a) return b;
-    if(!b) return a;
-    return parseDate(a) <= parseDate(b) ? a : b;
-  };
-
-  if(stage === 1){
-    const d = min2(dl.investigationDeadline, dl.decisionDeadline);
-    return { type:"调查到期", date:d };
-  }
-  if(stage === 2){
-    const d = min2(dl.investigationDeadline, dl.decisionDeadline);
-    return { type:"调查到期", date:d };
-  }
-  if(stage === 3){
-    return { type:"告知最晚", date: dl.noticeLatest };
-  }
-  if(stage === 4){
-    return { type:"告知最晚", date: dl.noticeLatest };
-  }
-  if(stage === 5){
-    return { type:"送达最晚", date: dl.serveDeadline };
-  }
-  if(stage === 6){
-    return { type:"缴款最晚", date: dl.payDeadline };
-  }
-  if(stage === 7){
-    return { type:"缴款最晚", date: dl.payDeadline };
-  }
-  if(stage === 8){
-    return { type:"立卷最晚", date: dl.filingDeadline };
-  }
-  if(stage === 9){
-    return { type:"归档最晚", date: dl.archiveDeadline };
-  }
-  return { type:"-", date:null };
-}
-
-function stageName(id){
-  return (STAGES.find(s=>s.id===id)||{}).name || "-";
-}
-function nextStageId(id){
-  if(id>=10) return 10;
-  return id+1;
-}
-
-function loadCases(){
-  try{
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : [];
-  }catch(e){
-    return [];
-  }
-}
-function persist(){
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(CASES));
-}
-
-function setNow(){
-  const d = new Date();
-  const s = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
-  document.getElementById("nowText").textContent = `当前时间：${s}`;
-}
-
-function kpi(){
-  const total = CASES.length;
-  let overdue=0, warning=0, normal=0;
-  CASES.forEach(c=>{
-    const info = nodeDeadlineInfo(c);
-    const r = info.date ? diffDays(info.date) : null;
-    if(r===null){ normal++; return; }
-    if(r<=0) overdue++;
-    else if(r<=3) warning++;
-    else normal++;
+async function load(){
+  cases = await db.getAll();
+  cases.sort((a,b)=>(b.updated||'').localeCompare(a.updated||''));
+  render();
+  // KPI
+  let total=cases.length, over=0, acc=0, norm=0;
+  cases.forEach(c=>{
+    if(c.entType==='事故案件') acc++;
+    if(c.stage>=6) return;
+    const d = getDead(c).days;
+    if(d<=0) over++; else norm++;
   });
-
-  const row = document.getElementById("kpiRow");
-  row.innerHTML = `
-    <div class="kpi"><div class="n">${total}</div><div class="t">案件总数</div></div>
-    <div class="kpi"><div class="n" style="color:var(--red)">${overdue}</div><div class="t">逾期</div></div>
-    <div class="kpi"><div class="n" style="color:var(--amber)">${warning}</div><div class="t">临期（≤3天）</div></div>
-    <div class="kpi"><div class="n" style="color:var(--green)">${normal}</div><div class="t">正常</div></div>
-  `;
-}
-
-function riskPillByRemaining(rem){
-  if(rem===null) return "pill";
-  if(rem<=0) return "pill stage-over";
-  if(rem<=3) return "pill stage-warn";
-  return "pill";
-}
-
-function renderStageFilter(){
-  const sel = document.getElementById("fStage");
-  sel.innerHTML = `<option value="">全部</option>` + STAGES.map(s=>`<option value="${s.id}">${s.name}</option>`).join("");
-}
-renderStageFilter();
-
-function applyFilters(){
-  const q = (document.getElementById("q").value||"").trim().toLowerCase();
-  const ft = document.getElementById("fType").value;
-  const fs = document.getElementById("fStage").value;
-  const fr = document.getElementById("fRisk").value;
-
-  let arr = CASES.slice();
-
-  if(q){
-    arr = arr.filter(c=>{
-      return (c.caseNumber||"").toLowerCase().includes(q) ||
-             (c.enterpriseName||"").toLowerCase().includes(q) ||
-             (c.caseName||"").toLowerCase().includes(q) ||
-             (c.handlerName||"").toLowerCase().includes(q);
-    });
-  }
-  if(ft) arr = arr.filter(c=>c.enterpriseType===ft);
-  if(fs) arr = arr.filter(c=>String(c.progress||1)===String(fs));
-  if(fr){
-    arr = arr.filter(c=>{
-      const info = nodeDeadlineInfo(c);
-      const r = info.date ? diffDays(info.date) : null;
-      if(r===null) return fr==="normal";
-      if(fr==="normal") return r>3;
-      if(fr==="warning") return r>=1 && r<=3;
-      if(fr==="overdue") return r<=0;
-      return true;
-    });
-  }
-  return arr;
+  document.getElementById('kpi-total').textContent = total;
+  document.getElementById('kpi-overdue').textContent = over;
+  document.getElementById('kpi-accident').textContent = acc;
+  document.getElementById('kpi-normal').textContent = norm;
 }
 
 function render(){
-  setNow();
-  kpi();
-  const arr = applyFilters();
-
-  const tbody = document.getElementById("tbody");
-  tbody.innerHTML = "";
-
-  if(arr.length===0){
-    tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:18px;color:var(--muted);font-weight:900">暂无数据</td></tr>`;
-    return;
-  }
-
-  arr.forEach(c=>{
-    const info = nodeDeadlineInfo(c);
-    const rem = info.date ? diffDays(info.date) : null;
-    const remText = (rem===null) ? "-" : (rem>0 ? `${rem}天` : (rem===0 ? "最后1天" : `逾期${Math.abs(rem)}天`));
-    const pillCls = riskPillByRemaining(rem);
-
-    const stage = c.progress||1;
-    const stageCls = stage===2 ? "pill stage-invest" : pillCls;
-
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td><div class="statusText">${escapeHtml(c.caseNumber||"-")}</div><div class="muted">立案：${escapeHtml(c.registerDate||"-")}</div></td>
-      <td><div class="statusText">${escapeHtml(c.enterpriseName||"-")}</div><div class="muted">${escapeHtml(c.caseName||"-")}</div></td>
-      <td>${escapeHtml(c.enterpriseType||"-")}</td>
-      <td>${escapeHtml(c.handlerName||"-")}</td>
-      <td><span class="${stageCls}">${escapeHtml(stageName(stage))}</span></td>
-      <td>${escapeHtml(info.type||"-")}</td>
-      <td>${escapeHtml(info.date||"-")}</td>
-      <td><span class="${pillCls}">${escapeHtml(remText)}</span></td>
-      <td>
-        <button class="btn ghost" data-act="detail" data-id="${c.id}">详情</button>
-        ${stage<10 ? `<button class="btn dark" data-act="update" data-id="${c.id}">更新</button>` : ``}
-      </td>
-    `;
-    tbody.appendChild(tr);
-  });
+  const body = document.getElementById('tableBody');
+  const q = document.getElementById('searchInput').value.trim();
+  const fType = document.getElementById('filterType').value;
+  
+  body.innerHTML = cases.filter(c => {
+    return (!q || (c.caseNumber+c.entName).includes(q)) && (!fType || c.entType===fType);
+  }).map(c => {
+    const d = getDead(c);
+    const sName = STAGES.find(x=>x.id===c.stage)?.name||'-';
+    let badge = d.days<=0 ? 'red' : (d.days<=7 ? 'orange' : 'blue');
+    if(c.stage>=6) badge='blue';
+    const typeBadge = c.entType==='事故案件' ? 'badge purple' : 'badge gray';
+    
+    return `<tr>
+      <td><b>${c.entName}</b><div style="font-size:12px;color:#64748b">${c.caseNumber}</div></td>
+      <td><span class="${typeBadge}">${c.entType}</span></td>
+      <td>${c.handler}</td>
+      <td><span style="color:#2563eb;font-weight:bold">${sName}</span></td>
+      <td>${d.date} ${d.isAccident?'<span style="font-size:10px;color:red">(60日)</span>':''}</td>
+      <td>${c.stage>=6 ? '已结案' : `<span class="badge ${badge}">${d.days}天</span>`}</td>
+      <td style="text-align:right"><button class="btn outline" onclick="openDetail('${c.id}')">详情</button></td>
+    </tr>`;
+  }).join('') || '<tr><td colspan="7" style="text-align:center;padding:20px;color:#94a3b8">无数据</td></tr>';
 }
 
-function escapeHtml(s){
-  return String(s).replace(/[&<>"']/g, m=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m]));
-}
-
-function todayStr(){
-  const d = new Date();
-  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
-}
-document.getElementById("registerDate").value = todayStr();
-
-document.getElementById("btnAddCase").addEventListener("click", ()=>{
-  const caseNumber = document.getElementById("caseNumber").value.trim();
-  const enterpriseName = document.getElementById("enterpriseName").value.trim();
-  const enterpriseType = document.getElementById("enterpriseType").value;
-  const caseName = document.getElementById("caseName").value.trim();
-  const registerDate = document.getElementById("registerDate").value;
-  const handlerName = document.getElementById("handlerName").value.trim();
-  const decisionLimit = Number(document.getElementById("decisionLimit").value||90);
-  const investigationLimit = Number(document.getElementById("investigationLimit").value||30);
-  const remark = document.getElementById("caseRemark").value.trim();
-
-  if(!caseNumber || !enterpriseName || !enterpriseType || !caseName || !registerDate || !handlerName){
-    alert("请完整填写必填项。");
-    return;
-  }
-
-  const id = String(Date.now()) + "_" + Math.random().toString(36).slice(2,8);
-  const c = {
-    id,
-    caseNumber,
-    enterpriseName,
-    enterpriseType,
-    caseName,
-    handlerName,
-    registerDate,
-    decisionLimit,
-    investigationLimit,
-    remark,
-    progress: 1,
-    updateTime: new Date().toISOString(),
-    keyDates: {
-      investigationDone: "",
-      discussionDone: "",
-      noticeServed: "",
-      decisionMade: "",
-      decisionServed: "",
-      finePaid: "",
-      closed: "",
-      filed: "",
-      archived: ""
-    },
-    remediation: { issue:"", deadline:"", review:"", result:"", note:"", updateTime:"" },
-    docs: {},
-    files: []
-  };
-
-  DOCS.forEach((_, idx)=>{ c.docs["d"+(idx+1)] = false; });
-
-  c.logs = [{
-    time: new Date().toISOString(),
-    stage: 1,
-    text: "立案（登记）"
-  }];
-
-  CASES.push(c);
-  persist();
-  clearCreateForm();
-  render();
-});
-
-function clearCreateForm(){
-  document.getElementById("caseNumber").value = "";
-  document.getElementById("enterpriseName").value = "";
-  document.getElementById("enterpriseType").value = "";
-  document.getElementById("caseName").value = "";
-  document.getElementById("handlerName").value = "";
-  document.getElementById("decisionLimit").value = "90";
-  document.getElementById("investigationLimit").value = "30";
-  document.getElementById("caseRemark").value = "";
-}
-
-/* ✅ 关键修复：列表点“更新”只弹出更新弹窗，不联动详情页 */
-document.getElementById("tbody").addEventListener("click", (e)=>{
-  const btn = e.target.closest("button");
-  if(!btn) return;
-
-  const act = btn.getAttribute("data-act");
-  const id  = btn.getAttribute("data-id");
-  if(!act || !id) return;
-
-  if(act==="detail"){
-    openDetail(id);
-    return;
-  }
-  if(act==="update"){
-    currentId = id;      // 让 openUpdate() 能找到当前案件
-    openUpdate();        // 只打开“更新进度”
-    return;
-  }
-});
-
-document.getElementById("btnFilter").addEventListener("click", render);
-document.getElementById("btnReset").addEventListener("click", ()=>{
-  document.getElementById("q").value="";
-  document.getElementById("fType").value="";
-  document.getElementById("fStage").value="";
-  document.getElementById("fRisk").value="";
-  render();
-});
-
-const detailModal = document.getElementById("detailModal");
-const updateModal = document.getElementById("updateModal");
-const settingsModal = document.getElementById("settingsModal");
-
-document.getElementById("closeDetail").addEventListener("click", closeDetail);
-document.getElementById("closeUpdate").addEventListener("click", closeUpdate);
-document.getElementById("u_cancel").addEventListener("click", closeUpdate);
-
-document.getElementById("btnOpenUpdate").addEventListener("click", openUpdate);
-
-document.getElementById("btnDeleteCase").addEventListener("click", ()=>{
-  if(!currentId) return;
-  const c = CASES.find(x=>x.id===currentId);
-  if(!c) return;
-  const ok = confirm(`确认删除案件：${c.caseNumber}？删除后无法恢复。`);
-  if(!ok) return;
-  CASES = CASES.filter(x=>x.id!==currentId);
-  persist();
-  closeDetail();
-  render();
-});
-
-document.querySelectorAll(".tabBtn").forEach(b=>{
-  b.addEventListener("click", ()=>{
-    document.querySelectorAll(".tabBtn").forEach(x=>x.classList.remove("active"));
-    document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
-    b.classList.add("active");
-    document.getElementById(b.dataset.tab).classList.add("active");
-  });
-});
-
-function openDetail(id){
-  const c = CASES.find(x=>x.id===id);
-  if(!c) return;
-  currentId = id;
-
-  document.getElementById("detailTitle").textContent = `案件详情｜${c.caseNumber}`;
-  document.getElementById("d_caseNumber").textContent = c.caseNumber;
-  document.getElementById("d_enterpriseName").textContent = c.enterpriseName;
-  document.getElementById("d_enterpriseType").textContent = c.enterpriseType;
-  document.getElementById("d_handlerName").textContent = c.handlerName;
-  document.getElementById("d_registerDate").textContent = c.registerDate;
-  document.getElementById("d_decisionLimit").textContent = `${c.decisionLimit}日`;
-  document.getElementById("d_investigationLimit").textContent = `${c.investigationLimit}日`;
-  document.getElementById("d_stage").textContent = stageName(c.progress||1);
-  document.getElementById("d_remark").value = c.remark || "";
-
-  renderDocs(c);
-  fillKeyDates(c);
-  renderDeadlinePanel(c);
-  renderTimeline(c);
-  fillRemedy(c);
-  renderFiles(c);
-
-  document.querySelectorAll(".tabBtn").forEach(x=>x.classList.remove("active"));
-  document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
-  document.querySelector('.tabBtn[data-tab="tabBase"]').classList.add("active");
-  document.getElementById("tabBase").classList.add("active");
-
-  detailModal.style.display="block";
-}
-
-function closeDetail(){
-  detailModal.style.display="none";
-  currentId = null;
-}
-
-window.addEventListener("click",(e)=>{
-  if(e.target===detailModal) closeDetail();
-  if(e.target===updateModal) closeUpdate();
-  if(e.target===settingsModal) closeSettings();
-});
-
-document.getElementById("btnSaveRemark").addEventListener("click", ()=>{
-  const c = currentCase();
-  if(!c) return;
-  c.remark = document.getElementById("d_remark").value.trim();
-  c.updateTime = new Date().toISOString();
-  persist();
-  render();
-  alert("备注已保存。");
-});
-
-function currentCase(){
-  if(!currentId) return null;
-  return CASES.find(x=>x.id===currentId) || null;
-}
-
-document.getElementById("btnSaveKeyDates").addEventListener("click", ()=>{
-  const c = currentCase();
-  if(!c) return;
-
-  c.keyDates.investigationDone = document.getElementById("k_investigationDone").value || "";
-  c.keyDates.discussionDone = document.getElementById("k_discussionDone").value || "";
-  c.keyDates.noticeServed = document.getElementById("k_noticeServed").value || "";
-  c.keyDates.decisionMade = document.getElementById("k_decisionMade").value || "";
-  c.keyDates.decisionServed = document.getElementById("k_decisionServed").value || "";
-  c.keyDates.finePaid = document.getElementById("k_finePaid").value || "";
-  c.keyDates.closed = document.getElementById("k_closed").value || "";
-  c.keyDates.filed = document.getElementById("k_filed").value || "";
-  c.keyDates.archived = document.getElementById("k_archived").value || "";
-
-  c.updateTime = new Date().toISOString();
-  persist();
-  renderDeadlinePanel(c);
-  render();
-  alert("关键日期已保存。");
-});
-
-function fillKeyDates(c){
-  const kd = c.keyDates || {};
-  document.getElementById("k_investigationDone").value = kd.investigationDone || "";
-  document.getElementById("k_discussionDone").value = kd.discussionDone || "";
-  document.getElementById("k_noticeServed").value = kd.noticeServed || "";
-  document.getElementById("k_decisionMade").value = kd.decisionMade || "";
-  document.getElementById("k_decisionServed").value = kd.decisionServed || "";
-  document.getElementById("k_finePaid").value = kd.finePaid || "";
-  document.getElementById("k_closed").value = kd.closed || "";
-  document.getElementById("k_filed").value = kd.filed || "";
-  document.getElementById("k_archived").value = kd.archived || "";
-}
-
-function renderDeadlinePanel(c){
-  const dl = computeDeadlines(c);
-  const node = nodeDeadlineInfo(c);
-
-  document.getElementById("d_decisionDeadline").textContent = dl.decisionDeadline || "-";
-  document.getElementById("d_noticeLatest").textContent = dl.noticeLatest || "-";
-  document.getElementById("d_investigationDeadline").textContent = dl.investigationDeadline || "-";
-  document.getElementById("d_nodeDeadline").textContent = node.date ? `${node.type}：${node.date}` : "-";
-
-  document.getElementById("d_serveDeadline").textContent = dl.serveDeadline || "-";
-  document.getElementById("d_payDeadline").textContent = dl.payDeadline || "-";
-  document.getElementById("d_filingDeadline").textContent = dl.filingDeadline || "-";
-  document.getElementById("d_archiveDeadline").textContent = dl.archiveDeadline || "-";
-}
-
-function renderTimeline(c){
-  const box = document.getElementById("timeline");
-  const logs = (c.logs||[]).slice().sort((a,b)=>new Date(a.time)-new Date(b.time));
-  if(!logs.length){
-    box.innerHTML = `<div class="hint">暂无记录</div>`;
-    return;
-  }
-  box.innerHTML = logs.map(l=>{
-    const t = new Date(l.time);
-    const ts = `${t.getFullYear()}-${pad(t.getMonth()+1)}-${pad(t.getDate())} ${pad(t.getHours())}:${pad(t.getMinutes())}`;
-    return `<div class="timelineItem">
-      <div class="tt">${escapeHtml(stageName(l.stage))}</div>
-      <div class="dd">时间：${escapeHtml(ts)} ｜ ${escapeHtml(l.text||"")}</div>
-    </div>`;
-  }).join("");
-}
-
-document.getElementById("btnSaveRemedy").addEventListener("click", ()=>{
-  const c = currentCase();
-  if(!c) return;
-  c.remediation.issue = document.getElementById("r_issue").value || "";
-  c.remediation.deadline = document.getElementById("r_deadline").value || "";
-  c.remediation.review = document.getElementById("r_review").value || "";
-  c.remediation.result = document.getElementById("r_result").value || "";
-  c.remediation.note = document.getElementById("r_note").value.trim() || "";
-  c.remediation.updateTime = new Date().toISOString();
-  c.updateTime = new Date().toISOString();
-  persist();
-  fillRemedy(c);
-  alert("整改信息已保存。");
-});
-
-function fillRemedy(c){
-  const r = c.remediation || {};
-  document.getElementById("r_issue").value = r.issue || "";
-  document.getElementById("r_deadline").value = r.deadline || "";
-  document.getElementById("r_review").value = r.review || "";
-  document.getElementById("r_result").value = r.result || "";
-  document.getElementById("r_note").value = r.note || "";
-
-  const hint = document.getElementById("remedyHint");
-  if(r.updateTime){
-    const t = new Date(r.updateTime);
-    hint.textContent = `最后更新时间：${t.getFullYear()}-${pad(t.getMonth()+1)}-${pad(t.getDate())} ${pad(t.getHours())}:${pad(t.getMinutes())}`;
-  }else{
-    hint.textContent = "";
-  }
-}
-
-function renderDocs(c){
-  const box = document.getElementById("docChecklist");
-  box.innerHTML = DOCS.map((name, idx)=>{
-    const key = "d"+(idx+1);
-    const checked = !!(c.docs && c.docs[key]);
-    return `<div class="chk">
-      <input type="checkbox" id="${key}" ${checked?"checked":""}>
-      <label for="${key}">${escapeHtml(name)}</label>
-    </div>`;
-  }).join("");
-}
-document.getElementById("btnSaveDocs").addEventListener("click", ()=>{
-  const c = currentCase();
-  if(!c) return;
-  c.docs = c.docs || {};
-  DOCS.forEach((_, idx)=>{
-    const key = "d"+(idx+1);
-    c.docs[key] = !!document.getElementById(key).checked;
-  });
-  c.updateTime = new Date().toISOString();
-  persist();
-  alert("清单已保存。");
-});
-
-document.getElementById("btnUpload").addEventListener("click", ()=>{
-  const c = currentCase();
-  if(!c) return;
-  const cat = document.getElementById("f_cat").value;
-  const note = document.getElementById("f_note").value.trim();
-  const fileInput = document.getElementById("f_file");
-  const file = fileInput.files && fileInput.files[0];
-  if(!file){ alert("请选择文件。"); return; }
-
-  const max = 2 * 1024 * 1024;
-  if(file.size > max){
-    const ok = confirm("文件较大，确认仍上传？");
-    if(!ok) return;
-  }
-
-  const reader = new FileReader();
-  reader.onload = ()=>{
-    c.files = c.files || [];
-    c.files.push({
-      id: String(Date.now()) + "_" + Math.random().toString(36).slice(2,6),
-      cat, note,
-      name: file.name,
-      type: file.type,
-      size: file.size,
-      data: reader.result,
-      time: new Date().toISOString()
-    });
-    c.updateTime = new Date().toISOString();
-    persist();
-    renderFiles(c);
-    document.getElementById("f_note").value = "";
-    document.getElementById("f_file").value = "";
-    alert("文件已上传。");
-  };
-  reader.readAsDataURL(file);
-});
-
-function renderFiles(c){
-  const box = document.getElementById("fileList");
-  const files = (c.files||[]).slice().sort((a,b)=>new Date(b.time)-new Date(a.time));
-  if(!files.length){
-    box.innerHTML = `<div class="hint" style="margin-top:12px">暂无文件</div>`;
-    return;
-  }
-  box.innerHTML = files.map(f=>{
-    const t = new Date(f.time);
-    const ts = `${t.getFullYear()}-${pad(t.getMonth()+1)}-${pad(t.getDate())} ${pad(t.getHours())}:${pad(t.getMinutes())}`;
-    return `<div class="fileListItem">
-      <div class="statusText">${escapeHtml(f.cat)}｜${escapeHtml(f.name)}</div>
-      <div class="muted">时间：${escapeHtml(ts)} ｜ ${(f.size/1024).toFixed(1)}KB ${f.note?("｜备注："+escapeHtml(f.note)):""}</div>
-      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px">
-        <button class="btn ghost" onclick="previewFile('${f.id}')">预览</button>
-        <button class="btn red" onclick="removeFile('${f.id}')">删除</button>
-      </div>
-    </div>`;
-  }).join("");
-}
-
-window.previewFile = function(fileId){
-  const c = currentCase();
-  if(!c) return;
-  const f = (c.files||[]).find(x=>x.id===fileId);
-  if(!f) return;
-
-  if(f.type && f.type.includes("pdf")){
-    const w = window.open("");
-    if(!w){ alert("浏览器拦截了弹窗。"); return; }
-    w.document.write(`<title>预览｜${escapeHtml(f.name)}</title><embed src="${f.data}" type="application/pdf" width="100%" height="100%"/>`);
-    return;
-  }
-  if(f.type && f.type.includes("image")){
-    const w = window.open("");
-    if(!w){ alert("浏览器拦截了弹窗。"); return; }
-    w.document.write(`<title>预览｜${escapeHtml(f.name)}</title><img src="${f.data}" style="max-width:100%;height:auto;display:block;margin:0 auto"/>`);
-    return;
-  }
-  alert("该类型文件暂不支持在线预览。");
+// Event Listeners
+document.getElementById('btnNewCase').onclick = () => {
+  curId = null;
+  ['inp_caseNumber','inp_entName','inp_handler','inp_regDate'].forEach(i=>document.getElementById(i).value='');
+  document.getElementById('inp_limit').value = "90";
+  document.getElementById('inp_entType').value = "矿山";
+  document.getElementById('accidentHint').style.display='none';
+  document.getElementById('inp_limit').disabled = false;
+  document.getElementById('timelineList').innerHTML='';
+  document.getElementById('fileListArea').innerHTML='';
+  document.getElementById('detailModal').classList.add('open');
 };
 
-window.removeFile = function(fileId){
-  const c = currentCase();
-  if(!c) return;
-  const ok = confirm("确认删除该文件记录？");
-  if(!ok) return;
-  c.files = (c.files||[]).filter(x=>x.id!==fileId);
-  c.updateTime = new Date().toISOString();
-  persist();
-  renderFiles(c);
+document.getElementById('inp_entType').onchange = (e) => {
+  const isAcc = e.target.value === '事故案件';
+  const limitSel = document.getElementById('inp_limit');
+  const hint = document.getElementById('accidentHint');
+  
+  if(isAcc){
+    limitSel.disabled = true;
+    hint.style.display = 'block';
+    toast('⚠️ 已选择事故案件，时限自动锁定为60日！', 'error');
+  } else {
+    limitSel.disabled = false;
+    hint.style.display = 'none';
+  }
 };
 
-function openUpdate(){
-  const c = currentCase();
-  if(!c) return;
+window.openDetail = async (id) => {
+  curId = id;
+  const c = cases.find(x=>x.id===id);
+  document.getElementById('inp_caseNumber').value = c.caseNumber;
+  document.getElementById('inp_entName').value = c.entName;
+  document.getElementById('inp_entType').value = c.entType;
+  document.getElementById('inp_regDate').value = c.registerDate;
+  document.getElementById('inp_handler').value = c.handler;
+  document.getElementById('inp_limit').value = c.decisionLimit;
+  
+  // Trigger logic for accident lock
+  const isAcc = c.entType === '事故案件';
+  document.getElementById('inp_limit').disabled = isAcc;
+  document.getElementById('accidentHint').style.display = isAcc ? 'block' : 'none';
 
-  const curr = c.progress||1;
-  if(curr>=10){
-    alert("已归档，无需更新。");
-    return;
-  }
+  document.getElementById('view_stage').textContent = STAGES.find(x=>x.id===c.stage)?.name;
+  document.getElementById('view_next_stage').textContent = STAGES.find(x=>x.id===c.stage+1)?.name || '无';
+  
+  const tl = document.getElementById('timelineList');
+  tl.innerHTML = (c.timeline||[]).map(t=>`<div style="margin-top:10px"><div style="font-size:12px;color:#64748b">${t.date}</div><div>${t.text}</div></div>`).join('');
+  
+  renderFiles(id);
+  document.getElementById('detailModal').classList.add('open');
+};
 
-  const next = nextStageId(curr);
-  const node = nodeDeadlineInfo(c);
-  const dl = computeDeadlines(c);
+window.closeModal = () => document.getElementById('detailModal').classList.remove('open');
 
-  document.getElementById("u_curr").textContent = stageName(curr);
-  document.getElementById("u_next").textContent = stageName(next);
-  document.getElementById("u_deadline").textContent = node.date ? `${node.type}：${node.date}` : "-";
-  document.getElementById("u_decisionDeadline").textContent = dl.decisionDeadline || "-";
-
-  document.getElementById("u_doneDate").value = todayStr();
-  document.getElementById("u_note").value = "";
-  document.getElementById("u_chk1").checked = false;
-  document.getElementById("u_chk2").checked = false;
-  document.getElementById("u_extraLine").style.display = "none";
-  document.getElementById("u_warnText").textContent = "";
-
-  updateModal.style.display = "block";
-}
-function closeUpdate(){ updateModal.style.display = "none"; }
-
-document.getElementById("u_confirm").addEventListener("click", ()=>{
-  const c = currentCase();
-  if(!c) return;
-
-  const curr = c.progress||1;
-  if(curr>=10) return;
-
-  const doneDate = document.getElementById("u_doneDate").value;
-  const note = document.getElementById("u_note").value.trim();
-  const chk1 = document.getElementById("u_chk1").checked;
-  const chk2 = document.getElementById("u_chk2").checked;
-
-  if(!chk1){ alert("请先确认。"); return; }
-  if(!doneDate){ alert("请选择完成日期。"); return; }
-
-  const warning = validateTransition(c, curr, doneDate);
-  if(warning && warning.level==="block"){
-    alert(warning.msg);
-    return;
-  }
-  if(warning && warning.level==="warn"){
-    document.getElementById("u_warnText").textContent = warning.msg;
-    document.getElementById("u_extraLine").style.display = "flex";
-    if(!chk2){
-      alert("存在异常提示，请勾选第二项后提交。");
-      return;
-    }
-  }
-
-  if(curr===9){
-    const allChecked = DOCS.every((_, idx)=> !!c.docs["d"+(idx+1)]);
-    if(!allChecked){
-      alert("文书清单未勾选完整，无法进入“案卷归档”。");
-      return;
-    }
-  }
-
-  writeKeyDateByStage(c, curr, doneDate);
-
-  c.progress = nextStageId(curr);
-  c.updateTime = new Date().toISOString();
-
-  c.logs = c.logs || [];
-  c.logs.push({
-    time: new Date().toISOString(),
-    stage: c.progress,
-    text: note ? `进度更新：${note}` : "进度更新"
-  });
-
-  persist();
-
-  document.getElementById("d_stage").textContent = stageName(c.progress);
-  fillKeyDates(c);
-  renderDeadlinePanel(c);
-  renderTimeline(c);
-  renderDocs(c);
-  renderFiles(c);
-
-  closeUpdate();
-  render();
-});
-
-function writeKeyDateByStage(c, currStage, doneDate){
-  c.keyDates = c.keyDates || {};
-  if(currStage===2) c.keyDates.investigationDone = doneDate;
-  if(currStage===3) c.keyDates.discussionDone = doneDate;
-  if(currStage===4) c.keyDates.noticeServed = doneDate;
-  if(currStage===5) c.keyDates.decisionMade = doneDate;
-  if(currStage===6) c.keyDates.decisionServed = doneDate;
-  if(currStage===7) c.keyDates.finePaid = doneDate;
-  if(currStage===8) c.keyDates.closed = doneDate;
-  if(currStage===9) c.keyDates.filed = doneDate;
-}
-
-function validateTransition(c, currStage, doneDate){
-  const dl = computeDeadlines(c);
-  const kd = c.keyDates || {};
-
-  const done = parseDate(doneDate);
-  const dd = dl.decisionDeadline ? parseDate(dl.decisionDeadline) : null;
-  const noticeLatest = dl.noticeLatest ? parseDate(dl.noticeLatest) : null;
-
-  if(currStage===4 && noticeLatest && done > noticeLatest){
-    return { level:"warn", msg:"告知送达日超过“告知最晚日”。" };
-  }
-  if(currStage===5 && dd && done > dd){
-    return { level:"warn", msg:"决定签发日超过“决定最晚日”。" };
-  }
-  if(currStage===5 && kd.noticeServed){
-    const ns = parseDate(kd.noticeServed);
-    if(ns){
-      const gap = Math.floor((done - ns)/(1000*60*60*24));
-      if(gap < 3){
-        return { level:"warn", msg:"告知→决定间隔不足3天。" };
-      }
-    }
-  }
-  if(currStage===6 && kd.decisionMade){
-    const dm = parseDate(kd.decisionMade);
-    if(dm){
-      const gap = Math.floor((done - dm)/(1000*60*60*24));
-      if(gap > 7){
-        return { level:"warn", msg:"决定→送达超过7天。" };
-      }
-    }
-  }
-  if(currStage===7 && kd.decisionServed){
-    const ds = parseDate(kd.decisionServed);
-    if(ds){
-      const gap = Math.floor((done - ds)/(1000*60*60*24));
-      if(gap > 15){
-        return { level:"warn", msg:"送达→缴款超过15天。" };
-      }
-    }
-  }
-  return null;
-}
-
-document.getElementById("btnSettings").addEventListener("click", openSettings);
-document.getElementById("closeSettings").addEventListener("click", closeSettings);
-
-function openSettings(){
-  HOLIDAYS = loadHolidays();
-  document.getElementById("holidayText").value = HOLIDAYS.join("\n");
-  settingsModal.style.display="block";
-}
-function closeSettings(){ settingsModal.style.display="none"; }
-
-document.getElementById("btnResetHoliday").addEventListener("click", ()=>{
-  document.getElementById("holidayText").value = defaultHolidays().join("\n");
-});
-document.getElementById("btnSaveHoliday").addEventListener("click", ()=>{
-  const txt = document.getElementById("holidayText").value || "";
-  const arr = txt.split("\n").map(s=>s.trim()).filter(Boolean);
-  localStorage.setItem(HOLIDAY_KEY, arr.join("\n"));
-  HOLIDAYS = loadHolidays();
-  alert("设置已保存。");
-  closeSettings();
-  const c = currentCase();
-  if(c) renderDeadlinePanel(c);
-  render();
-});
-
-document.getElementById("btnBackupJson").addEventListener("click", ()=>{
-  const data = { version: 2, exportedAt: new Date().toISOString(), holidays: HOLIDAYS, cases: CASES };
-  const blob = new Blob([JSON.stringify(data,null,2)], {type:"application/json"});
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = `托里县应急_案件备份_${todayStr()}.json`;
-  a.click();
-  URL.revokeObjectURL(a.href);
-});
-
-document.getElementById("btnRestoreJson").addEventListener("click", ()=>{
-  const input = document.createElement("input");
-  input.type="file";
-  input.accept=".json";
-  input.onchange = ()=>{
-    const file = input.files && input.files[0];
-    if(!file) return;
-    const r = new FileReader();
-    r.onload = ()=>{
-      try{
-        const obj = JSON.parse(r.result);
-        if(!obj || !Array.isArray(obj.cases)) throw new Error("格式不正确");
-        const ok = confirm("确认恢复备份？当前数据将被覆盖。");
-        if(!ok) return;
-        CASES = obj.cases;
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(CASES));
-        if(Array.isArray(obj.holidays)){
-          localStorage.setItem(HOLIDAY_KEY, obj.holidays.join("\n"));
-          HOLIDAYS = loadHolidays();
-        }
-        closeDetail();
-        render();
-        alert("已恢复。");
-      }catch(e){
-        alert("恢复失败：备份文件格式不正确。");
-      }
-    };
-    r.readAsText(file, "utf-8");
+document.getElementById('btnSaveBase').onclick = async () => {
+  const data = {
+    id: curId || Date.now().toString(),
+    caseNumber: document.getElementById('inp_caseNumber').value,
+    entName: document.getElementById('inp_entName').value,
+    entType: document.getElementById('inp_entType').value,
+    registerDate: document.getElementById('inp_regDate').value,
+    handler: document.getElementById('inp_handler').value,
+    decisionLimit: document.getElementById('inp_limit').value,
+    updated: new Date().toISOString()
   };
-  input.click();
-});
+  
+  if(!data.entName) return toast('企业名称必填','error');
+  
+  if(!curId){
+    data.stage = 1;
+    data.timeline = [{date:new Date().toISOString().split('T')[0], text:'案件建立'}];
+    curId = data.id;
+  } else {
+    const old = cases.find(x=>x.id===curId);
+    data.stage = old.stage; data.timeline = old.timeline;
+  }
+  
+  await db.put(data);
+  toast('保存成功');
+  load();
+};
 
-function loadScriptOnce(src){
-  return new Promise((resolve, reject)=>{
-    const exist = Array.from(document.scripts).some(s=>s.src===src);
-    if(exist){ resolve(); return; }
-    const s = document.createElement("script");
-    s.src = src;
-    s.onload = ()=>resolve();
-    s.onerror = ()=>reject(new Error("加载失败"));
-    document.head.appendChild(s);
+document.getElementById('btnUpdateProg').onclick = async () => {
+  if(!curId) return;
+  const c = cases.find(x=>x.id===curId);
+  const note = document.getElementById('inp_progNote').value;
+  const date = document.getElementById('inp_progDate').value || new Date().toISOString().split('T')[0];
+  
+  if(c.stage < 6) c.stage++;
+  c.timeline.push({date, text:`${STAGES.find(x=>x.id===c.stage)?.name}：${note}`});
+  c.updated = new Date().toISOString();
+  await db.put(c);
+  toast('进度已更新');
+  openDetail(curId); // refresh
+  load();
+};
+
+document.getElementById('btnDelete').onclick = async () => {
+  if(!confirm('确定删除？无法恢复！')) return;
+  await db.del(curId);
+  closeModal();
+  load();
+};
+
+// File Logic
+document.getElementById('btnUploadFile').onclick = async () => {
+  if(!curId) return toast('请先保存基本信息','error');
+  const file = document.getElementById('inp_file').files[0];
+  if(!file) return;
+  
+  await db.addFile({
+    id: Date.now().toString(), cid: curId,
+    name: file.name, type: file.type, blob: file,
+    date: new Date().toISOString()
   });
+  toast('上传成功');
+  renderFiles(curId);
+};
+
+async function renderFiles(cid){
+  const files = await db.getFiles(cid);
+  const box = document.getElementById('fileListArea');
+  box.innerHTML = files.map(f=>`
+    <div style="display:flex;justify-content:space-between;background:#f8fafc;padding:8px;margin-top:5px;border:1px solid #e2e8f0">
+      <a href="#" onclick="dlFile('${f.id}')">${f.name}</a>
+      <span style="color:red;cursor:pointer" onclick="rmFile('${f.id}')">删除</span>
+    </div>
+  `).join('');
 }
-async function ensureXlsx(){
-  await loadScriptOnce("https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js");
-}
 
-document.getElementById("btnExportXlsx").addEventListener("click", async ()=>{
-  try{ await ensureXlsx(); }catch(e){ alert("Excel组件加载失败，请检查网络。"); return; }
-  const rows = CASES.map(c=>{
-    const node = nodeDeadlineInfo(c);
-    const rem = node.date ? diffDays(node.date) : null;
-    const remText = (rem===null) ? "" : (rem>0 ? `${rem}天` : (rem===0 ? "最后1天" : `逾期${Math.abs(rem)}天`));
-    const dl = computeDeadlines(c);
-    return {
-      "案件编号": c.caseNumber,
-      "企业名称": c.enterpriseName,
-      "企业类型": c.enterpriseType,
-      "案件名称": c.caseName,
-      "办案人": c.handlerName,
-      "立案日期": c.registerDate,
-      "当前进度": stageName(c.progress||1),
-      "截止类型": node.type,
-      "截止日期": node.date || "",
-      "剩余": remText,
-      "决定最晚日": dl.decisionDeadline || "",
-      "告知最晚日": dl.noticeLatest || "",
-      "调查到期日": dl.investigationDeadline || "",
-      "备注": c.remark || ""
-    };
-  });
-  const ws = XLSX.utils.json_to_sheet(rows);
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, "案件数据");
-  XLSX.writeFile(wb, `托里县应急_案件数据_${todayStr()}.xlsx`);
-});
+window.dlFile = async (fid) => {
+  const db_ = await db.open();
+  const f = await new Promise(r=>db_.transaction(DB_CFG.fileStore).objectStore(DB_CFG.fileStore).get(fid).onsuccess=e=>r(e.target.result));
+  const url = URL.createObjectURL(f.blob);
+  const a = document.createElement('a'); a.href=url; a.download=f.name; a.click();
+};
 
-document.getElementById("btnImportXlsx").addEventListener("click", async ()=>{
-  try{ await ensureXlsx(); }catch(e){ alert("Excel组件加载失败，请检查网络。"); return; }
-  const input = document.createElement("input");
-  input.type="file";
-  input.accept=".xlsx,.xls";
-  input.onchange = ()=>{
-    const file = input.files && input.files[0];
-    if(!file) return;
-    const r = new FileReader();
-    r.onload = ()=>{
-      try{
-        const data = new Uint8Array(r.result);
-        const wb = XLSX.read(data, {type:"array"});
-        const ws = wb.Sheets[wb.SheetNames[0]];
-        const json = XLSX.utils.sheet_to_json(ws);
-        if(!json.length){ alert("Excel无数据。"); return; }
+window.rmFile = async (fid) => {
+  if(confirm('删除文件？')) { await db.delFile(fid); renderFiles(curId); }
+};
 
-        const ok = confirm(`确认导入 ${json.length} 条记录？（将追加到现有数据）`);
-        if(!ok) return;
-
-        let succ = 0;
-        json.forEach(row=>{
-          const caseNumber = String(row["案件编号"]||"").trim();
-          const enterpriseName = String(row["企业名称"]||"").trim();
-          const enterpriseType = String(row["企业类型"]||"").trim();
-          const caseName = String(row["案件名称"]||"").trim();
-          const handlerName = String(row["办案人"]||"").trim();
-          const registerDate = String(row["立案日期"]||"").trim();
-          if(!caseNumber || !enterpriseName || !enterpriseType || !caseName || !handlerName || !registerDate) return;
-
-          const id = String(Date.now()) + "_" + Math.random().toString(36).slice(2,8);
-          const decisionLimit = Number(row["处罚决定期限"]||90) || 90;
-          const investigationLimit = Number(row["调查取证期限"]||30) || 30;
-          const remark = String(row["备注"]||"").trim();
-
-          const c = {
-            id, caseNumber, enterpriseName, enterpriseType, caseName, handlerName, registerDate,
-            decisionLimit: (decisionLimit===180?180:90),
-            investigationLimit: (investigationLimit===60?60:30),
-            remark,
-            progress: 1,
-            updateTime: new Date().toISOString(),
-            keyDates: { investigationDone:"", discussionDone:"", noticeServed:"", decisionMade:"", decisionServed:"", finePaid:"", closed:"", filed:"", archived:"" },
-            remediation: { issue:"", deadline:"", review:"", result:"", note:"", updateTime:"" },
-            docs: {}, files: [],
-            logs: [{ time:new Date().toISOString(), stage:1, text:"立案（导入登记）" }]
-          };
-          DOCS.forEach((_, idx)=>{ c.docs["d"+(idx+1)] = false; });
-          CASES.push(c);
-          succ++;
-        });
-
-        persist();
-        render();
-        alert(`导入完成：成功 ${succ} 条。`);
-      }catch(e){
-        alert("导入失败：请检查表头字段。");
-      }
-    };
-    r.readAsArrayBuffer(file);
-  };
-  input.click();
-});
-
-render();
-  </script>
+// Init
+document.getElementById('inp_regDate').value = new Date().toISOString().split('T')[0];
+document.getElementById('filterType').onchange = load;
+document.getElementById('searchInput').oninput = load;
+load();
+</script>
 </body>
 </html>
